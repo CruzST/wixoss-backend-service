@@ -2,6 +2,7 @@ package com.wixossdeckbuilder.backendservice.model.entities;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.wixossdeckbuilder.backendservice.model.*;
+import com.wixossdeckbuilder.backendservice.model.enums.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "cards")
@@ -29,8 +30,10 @@ public class Card {
 
     private String name;
 
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
     @Enumerated(EnumType.STRING)
-    private Rarity rarity; // Store as the .name()
+    private List<Rarity> rarity; // Store as the .name()
 
     @Column(name = "card_type")
     @Enumerated(EnumType.STRING)
@@ -42,7 +45,8 @@ public class Card {
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-    private ArrayList<Colors> colors;
+    @Enumerated(EnumType.STRING)
+    private List<Colors> colors;
 
     private  int level;
 
@@ -53,7 +57,7 @@ public class Card {
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", name = "color_cost")
-    private ArrayList<ColorCost> cost;
+    private List<ColorCost> cost;
 
     @Column(name = "additional_limit")
     private String limit;
@@ -79,6 +83,19 @@ public class Card {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     private Serial serial;
+
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    private Image image;
+
+    //TODO: Add an attribute for TIMING
+    /*
+    * Timing could probably be an enum array
+    * Need to check the different terms they use, should all be the same
+    *
+    * */
+
+    private String timing;
 
 
 

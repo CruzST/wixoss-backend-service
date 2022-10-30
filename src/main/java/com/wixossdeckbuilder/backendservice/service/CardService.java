@@ -32,7 +32,9 @@ public class CardService {
                 cardRequest.getLifeBurst(),
                 cardRequest.getCoin(),
                 cardRequest.getSetFormat(),
-                cardRequest.getSerial()
+                cardRequest.getSerial(),
+                null, //TODO: fix this with image
+                cardRequest.getTiming()
         );
         return cardRepository.save(newCard);
     }
@@ -63,7 +65,9 @@ public class CardService {
                 cardRequest.getLifeBurst(),
                 cardRequest.getCoin(),
                 cardRequest.getSetFormat(),
-                cardRequest.getSerial()
+                cardRequest.getSerial(),
+                null, //TODO: fix this
+                cardRequest.getTiming()
         );
         return cardRepository.save(updatedCard);
     }
