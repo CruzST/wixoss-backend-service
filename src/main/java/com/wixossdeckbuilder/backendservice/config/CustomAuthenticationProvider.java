@@ -1,6 +1,6 @@
 package com.wixossdeckbuilder.backendservice.config;
 
-import com.wixossdeckbuilder.backendservice.model.entities.CustomRole;
+import com.wixossdeckbuilder.backendservice.model.enums.CustomRole;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
