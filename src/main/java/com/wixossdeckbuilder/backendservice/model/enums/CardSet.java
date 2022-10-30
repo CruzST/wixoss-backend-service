@@ -1,4 +1,4 @@
-package com.wixossdeckbuilder.backendservice.model;
+package com.wixossdeckbuilder.backendservice.model.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
