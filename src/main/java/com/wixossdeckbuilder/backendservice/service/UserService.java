@@ -1,6 +1,6 @@
 package com.wixossdeckbuilder.backendservice.service;
 
-import com.wixossdeckbuilder.backendservice.model.entities.CustomRole;
+import com.wixossdeckbuilder.backendservice.model.enums.CustomRole;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.model.payloads.UserRequest;
 import com.wixossdeckbuilder.backendservice.repository.UserRepository;

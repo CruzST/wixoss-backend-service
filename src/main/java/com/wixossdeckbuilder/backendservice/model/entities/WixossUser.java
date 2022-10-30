@@ -1,10 +1,12 @@
 package com.wixossdeckbuilder.backendservice.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.wixossdeckbuilder.backendservice.model.enums.CustomRole;
+import lombok.*;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -15,6 +17,10 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@TypeDefs(
+        {@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)}
+)
+
 public class WixossUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,6 +35,8 @@ public class WixossUser {
 
     private Boolean enabled;
 
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
     private Set<CustomRole> authorities;
 
 }
