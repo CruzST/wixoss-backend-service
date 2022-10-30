@@ -1,4 +1,4 @@
-package com.wixossdeckbuilder.backendservice.model;
+package com.wixossdeckbuilder.backendservice.model.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,5 +24,15 @@ public enum Rarity {
     SECRET_RARE("SCR");
 
     public final String value;
+
+    public static Rarity fromString(String type) {
+        for (Rarity rarity : Rarity.values()) {
+            if (rarity.getValue().equalsIgnoreCase(type)) {
+                return rarity;
+            }
+        }
+        return null;
+    }
+
 
 }

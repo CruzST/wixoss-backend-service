@@ -1,4 +1,4 @@
-package com.wixossdeckbuilder.backendservice.model.entities;
+package com.wixossdeckbuilder.backendservice.model.enums;
 
 public enum CustomRole {
     ADMIN,

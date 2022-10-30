@@ -1,4 +1,4 @@
-package com.wixossdeckbuilder.backendservice.model;
+package com.wixossdeckbuilder.backendservice.model.enums;
 
 
 public enum Colors {
