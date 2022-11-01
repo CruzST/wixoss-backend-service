@@ -12,6 +12,6 @@ public class Serial {
     private String serialNumber;
     private String formatSet;
     private CardSet cardSet;
-    private int cardNumber;
+    private String cardNumber;
     private String cardSetName;
 }

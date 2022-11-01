@@ -4,6 +4,8 @@ import com.wixossdeckbuilder.backendservice.model.enums.CustomRole;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.model.payloads.UserRequest;
 import com.wixossdeckbuilder.backendservice.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +16,13 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+    public static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     public WixossUser createNewUser(UserRequest userRequest) {
         System.out.println("Create new user called");
         WixossUser dupeUser = userRepository.findByUsername(userRequest.getUsername());
         if (Objects.nonNull(dupeUser)) {
-            System.out.println("there is a dupe");
+            logger.debug("There is a dupe");
             return null;
         }
         Set<CustomRole> authorities = new HashSet<>();
@@ -30,7 +34,7 @@ public class UserService {
                 userRequest.getUserPassword(),
                 true,
                 authorities);
-        System.out.println("new user" + newWixossUser);
+        logger.debug("new user" + newWixossUser);
         return userRepository.save(newWixossUser);
     }
 

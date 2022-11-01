@@ -3,6 +3,8 @@ package com.wixossdeckbuilder.backendservice.service;
 import com.wixossdeckbuilder.backendservice.model.entities.Card;
 import com.wixossdeckbuilder.backendservice.model.payloads.CardRequest;
 import com.wixossdeckbuilder.backendservice.repository.CardRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +13,17 @@ import java.util.Optional;
 
 @Service
 public class CardService {
+
+    public static final Logger logger = LoggerFactory.getLogger(CardService.class);
     @Autowired
     private CardRepository cardRepository;
 
-    public Card createNewCard(CardRequest cardRequest) {
+    public Card createNewCard(CardRequest cardRequest) throws Exception {
+        Optional<Card> cardInDatabase = findBySerial(cardRequest.getSerial().getSerialNumber());
+        if (cardInDatabase.isPresent()) {
+            logger.error("Card with serial: " + cardRequest.getSerial().getSerialNumber() + " already exists!");
+            return null;
+        }
         Card newCard = new Card(
                 null,
                 cardRequest.getName(),
@@ -66,7 +75,7 @@ public class CardService {
                 cardRequest.getCoin(),
                 cardRequest.getSetFormat(),
                 cardRequest.getSerial(),
-                null, //TODO: fix this
+                null, //TODO: fix this eventually
                 cardRequest.getTiming()
         );
         return cardRepository.save(updatedCard);
@@ -76,7 +85,7 @@ public class CardService {
         cardRepository.deleteById(id);
     }
 
-    public void findBySerial(String serial) {
-        // TODO: Update function
+    public Optional<Card> findBySerial(String serial) {
+        return cardRepository.findBySerial(serial);
     }
 }

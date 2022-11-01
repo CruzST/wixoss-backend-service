@@ -1,8 +1,11 @@
 package com.wixossdeckbuilder.backendservice.controller;
 
+import com.wixossdeckbuilder.backendservice.config.security.jwt.JWTTokenProvider;
 import com.wixossdeckbuilder.backendservice.model.entities.Card;
 import com.wixossdeckbuilder.backendservice.model.payloads.CardRequest;
 import com.wixossdeckbuilder.backendservice.service.CardService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,8 @@ public class CardController {
     @Autowired
     private CardService cardService;
 
+    public static final Logger logger = LoggerFactory.getLogger(CardService.class);
+
     //create card
     @PostMapping("/new")
     ResponseEntity<Card> createNewCard(@RequestBody @Valid CardRequest cardRequest) {
@@ -29,6 +34,8 @@ public class CardController {
                 response = ResponseEntity
                         .status(HttpStatus.CREATED)
                         .body(savedCard);
+            } else {
+                logger.error("Card was not saved!");
             }
         } catch (Exception e){
             response = ResponseEntity
@@ -82,10 +89,12 @@ public class CardController {
         return ResponseEntity.notFound().build();
     }
 
-    /*
     @GetMapping("/serial/{serial}")
-    ResponseEntity<Card> findCardBySerial(@PathVariable(value = "serial") String serial) {
-        // TODO: Update this function
-
-    }*/
+    ResponseEntity<Card> getCardBySerial(@PathVariable(value = "serial") String serial) {
+        Optional<Card> card = cardService.findBySerial(serial);
+        if (card.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(card.get());
+    }
 }
