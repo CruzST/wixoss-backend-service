@@ -22,10 +22,10 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
     @Autowired
     JWTTokenProvider tokenProvider;
 
-    @Value("${JWT_KEY}")
+    @Value("${jwt.key}")
     private String JWT_KEY;
 
-    @Value("${JWT_HEADER}")
+    @Value("${jwt.header}")
     private String JWT_HEADER;
 
     @Override

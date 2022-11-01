@@ -9,10 +9,9 @@ import org.springframework.security.core.Authentication;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,24 +20,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class JWTTokenProvider {
 
-    @Value("${JWT_KEY}")
+    @Value("${jwt.key}")
     private String JWT_KEY;
+
+    @Value("${jwt.exp.ms}")
+    private int JWT_EXP_MS;
+
+    @Value("${jwt.exp.hr}")
+    private int JWT_EXP_HR;
 
     public static final Logger logger = LoggerFactory.getLogger(JWTTokenProvider.class);
 
-    private SecretKey key = Keys.hmacShaKeyFor(JWT_KEY.getBytes(StandardCharsets.UTF_8));
-
-    @Value("${JWT_EXP_IN_MS}")
-    private String JWT_EXP_IN_MS;
-
     public String generateToken(Authentication authentication) {
+        SecretKey key = Keys.hmacShaKeyFor(JWT_KEY.getBytes(StandardCharsets.UTF_8));
+
+        /* Method 2 to adding time to expiration date */
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.HOUR_OF_DAY, JWT_EXP_HR);
+
         String jwt = Jwts.builder()
                 .setIssuer("Cruz")
                 .setSubject("Authentication token for User") // change later?
                 .claim("username", authentication.getName())
                 .claim("authorities", populateAuth(authentication.getAuthorities()))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + JWT_EXP_IN_MS)) // 2hrs
+                //.setExpiration(new Date(new Date().getTime() + JWT_EXP_MS)) // Method 1
+                .setExpiration(calendar.getTime()) // Method 2
                 .signWith(key).compact();
         return jwt;
     }
@@ -53,6 +61,7 @@ public class JWTTokenProvider {
 
     public Claims validateToken(String authToken){
         try{
+            SecretKey key = Keys.hmacShaKeyFor(JWT_KEY.getBytes(StandardCharsets.UTF_8));
             Claims claims = Jwts.parserBuilder().setSigningKey(key)
                     .build()
                     .parseClaimsJws(authToken)// this will parse and check the if it is valid

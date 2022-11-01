@@ -22,10 +22,10 @@ public class JTWTokenValidatorFilter extends OncePerRequestFilter {
     @Autowired
     JWTTokenProvider tokenProvider;
 
-    @Value("${JWT_HEADER}")
+    @Value("${jwt.header}")
     private String JWT_HEADER;
 
-    @Value("${JWT_KEY}")
+    @Value("${jwt.key}")
     private String JWT_KEY;
 
     @Override
