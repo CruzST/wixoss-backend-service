@@ -1,6 +1,5 @@
 package com.wixossdeckbuilder.backendservice.controller;
 
-import com.wixossdeckbuilder.backendservice.config.security.jwt.JWTTokenProvider;
 import com.wixossdeckbuilder.backendservice.model.entities.Card;
 import com.wixossdeckbuilder.backendservice.model.payloads.CardRequest;
 import com.wixossdeckbuilder.backendservice.service.CardService;
@@ -69,7 +68,8 @@ public class CardController {
 
     //update card
     @PutMapping("/update/{id}")
-    ResponseEntity<Card> updateCard(@RequestBody @Valid CardRequest cardRequest, Long id) {
+    ResponseEntity<Card> updateCard(@RequestBody @Valid CardRequest cardRequest,
+                                    @RequestBody @Valid Long id) {
         Optional<Card> cardToUpdate = cardService.getSingleCard(id);
         if (cardToUpdate.isPresent()) {
             Card result = cardService.updateCard(cardRequest, id);
