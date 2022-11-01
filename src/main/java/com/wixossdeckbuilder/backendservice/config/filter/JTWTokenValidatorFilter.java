@@ -1,11 +1,9 @@
 package com.wixossdeckbuilder.backendservice.config.filter;
 
-import com.wixossdeckbuilder.backendservice.config.security.SecurityConstants;
 import com.wixossdeckbuilder.backendservice.config.security.jwt.JWTTokenProvider;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,26 +11,30 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 public class JTWTokenValidatorFilter extends OncePerRequestFilter {
 
     @Autowired
     JWTTokenProvider tokenProvider;
 
+    @Value("${JWT_HEADER}")
+    private String JWT_HEADER;
+
+    @Value("${JWT_KEY}")
+    private String JWT_KEY;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String jwt = request.getHeader(SecurityConstants.JWT_HEADER);
+        String jwt = request.getHeader(JWT_HEADER);
         if (jwt != null) {
             try {
                 /*
-                SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
+                SecretKey key = Keys.hmacShaKeyFor(JWT_KEY.getBytes(StandardCharsets.UTF_8));
                 Claims claims = Jwts.parserBuilder()
                         .setSigningKey(key)
                         .build()

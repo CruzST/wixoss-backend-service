@@ -2,14 +2,11 @@ package com.wixossdeckbuilder.backendservice.config;
 
 import com.wixossdeckbuilder.backendservice.config.filter.JTWTokenValidatorFilter;
 import com.wixossdeckbuilder.backendservice.config.filter.JWTTokenGeneratorFilter;
-import com.wixossdeckbuilder.backendservice.model.entities.CustomRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -41,9 +38,9 @@ public class SecurityConfiguration {
                     }
                 })
                 .and().csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
-                .addFilterBefore(new JTWTokenValidatorFilter(), BasicAuthenticationFilter.class)
+                //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                //.and().addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+                //.addFilterBefore(new JTWTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
 //                    .antMatchers("/api/deck/**").hasAnyRole(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString())
 //                    .antMatchers("/api/card/new").hasAnyRole(CustomRole.ADMIN.toString())

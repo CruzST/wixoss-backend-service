@@ -32,6 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 
+### DON'T INCLUDE ###
 /src/main/resources/application.properties
 /src/main/resources/static/cards.json
 /src/main/resources/cardImages/
+/src/main/java/com/wixossdeckbuilder/backendservice/startup/loaders/AdminLoader.java

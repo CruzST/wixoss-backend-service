@@ -1,25 +1,19 @@
 package com.wixossdeckbuilder.backendservice.config.filter;
 
-import com.wixossdeckbuilder.backendservice.config.security.SecurityConstants;
 import com.wixossdeckbuilder.backendservice.config.security.jwt.JWTTokenProvider;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,12 +22,18 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
     @Autowired
     JWTTokenProvider tokenProvider;
 
+    @Value("${JWT_KEY}")
+    private String JWT_KEY;
+
+    @Value("${JWT_HEADER}")
+    private String JWT_HEADER;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             /*
-            SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
+            SecretKey key = Keys.hmacShaKeyFor(JWT_KEY.getBytes(StandardCharsets.UTF_8));
             String jwt = Jwts.builder()
                     .setIssuer("Cruz")
                     .setSubject("Authentication token for User") // change later?
@@ -44,7 +44,7 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
                     .signWith(key).compact();
              */
             String jwt = tokenProvider.generateToken(authentication);
-            response.setHeader(SecurityConstants.JWT_HEADER, jwt);
+            response.setHeader(JWT_HEADER, jwt);
         }
         filterChain.doFilter(request, response);
     }

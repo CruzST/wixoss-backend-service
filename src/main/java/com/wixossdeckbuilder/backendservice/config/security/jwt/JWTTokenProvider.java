@@ -1,14 +1,13 @@
 package com.wixossdeckbuilder.backendservice.config.security.jwt;
 
-import com.wixossdeckbuilder.backendservice.config.security.SecurityConstants;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 
 import javax.crypto.SecretKey;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Date;
@@ -16,16 +15,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JWTTokenProvider {
 
+    @Value("${JWT_KEY}")
+    private String JWT_KEY;
+
     public static final Logger logger = LoggerFactory.getLogger(JWTTokenProvider.class);
 
-    private SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
+    private SecretKey key = Keys.hmacShaKeyFor(JWT_KEY.getBytes(StandardCharsets.UTF_8));
+
+    @Value("${JWT_EXP_IN_MS}")
+    private String JWT_EXP_IN_MS;
 
     public String generateToken(Authentication authentication) {
         String jwt = Jwts.builder()
@@ -34,7 +38,7 @@ public class JWTTokenProvider {
                 .claim("username", authentication.getName())
                 .claim("authorities", populateAuth(authentication.getAuthorities()))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + SecurityConstants.JWT_EXP_IN_MS)) // 2hrs
+                .setExpiration(new Date(new Date().getTime() + JWT_EXP_IN_MS)) // 2hrs
                 .signWith(key).compact();
         return jwt;
     }
