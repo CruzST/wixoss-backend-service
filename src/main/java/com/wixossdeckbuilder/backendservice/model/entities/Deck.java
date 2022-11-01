@@ -24,7 +24,7 @@ public class Deck {
     @JoinColumn(name = "wixxossUserID")
     private WixossUser wixossUser;
 
-    @Column(name = "deck_name")
+    @Column(name = "deck_name") // max 255 char
     private String deckName;
 
     @Column(name = "creation_date")
@@ -35,4 +35,11 @@ public class Deck {
 
     @Column(name = "auto_delete")
     private Boolean autoDelete;
+
+    private int views;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    private LocalDate lastUpdated;
 }

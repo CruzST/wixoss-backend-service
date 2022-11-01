@@ -25,13 +25,26 @@ public class DeckContents {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne // Many Deck Contents to One Deck
     private Deck deck;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @ManyToOne // Many Deck Contents to one card?
     private Card card;
 
     @Column(name = "card_count")
     private int cardCount;
+
+    @Column(name = "card_name")
+    private String cardName;
+
+    @Column(name = "card_serial")
+    private String cardSerial;
+
+    public DeckContents(Deck deck, Card card, int amount, String serialNumber) {
+        this.id = null;
+        this.deck = deck;
+        this.card = card;
+        this.cardCount = amount;
+        this.cardSerial = serialNumber;
+    }
 }
