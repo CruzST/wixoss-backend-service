@@ -42,8 +42,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<WixossUser> getSingleUser(Long id){
+    public Optional<WixossUser> getSingleUser(Long id) {
         return userRepository.findById(id);
+    }
+
+    public WixossUser getReferenceToUserById(Long id) {
+        return userRepository.getReferenceById(id);
     }
 
     public void deleteUser(Long id) {
