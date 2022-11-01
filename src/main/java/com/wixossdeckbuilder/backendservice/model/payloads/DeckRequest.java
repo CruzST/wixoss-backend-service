@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DeckRequest {
-    private Long userid;
+    private Long deckOwnerId;
     private String deckName;
+    private String description;
 }
