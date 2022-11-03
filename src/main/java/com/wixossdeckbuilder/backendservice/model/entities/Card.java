@@ -25,8 +25,7 @@ import java.util.List;
 )
 public class Card {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
 
     private String name;
 

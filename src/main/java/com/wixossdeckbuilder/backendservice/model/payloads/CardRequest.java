@@ -8,14 +8,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class CardRequest {
+    private String id;
     private String name;
-    private ArrayList<Rarity> rarity;
+    private List<Rarity> rarity;
     private CardType cardType;
     private LrigTypeOrClass lrigTypeOrClass;
     private ArrayList<Colors> colors;

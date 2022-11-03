@@ -10,7 +10,8 @@ public enum CardType {
     LRIG("LRIG"),
     PIECE("PIECE"),
     SIGNI("SIGNI"),
-    SPELL("SPELL");
+    SPELL("SPELL"),
+    TOKEN("TOKEN");
 
     public final String value;
 

@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Serial {
-    private String serialNumber;
     private String formatSet;
     private CardSet cardSet;
     private String cardNumber;

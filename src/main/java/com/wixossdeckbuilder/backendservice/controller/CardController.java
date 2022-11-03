@@ -29,7 +29,7 @@ public class CardController {
         Card savedCard = null;
         try {
             savedCard = cardService.createNewCard(cardRequest);
-            if (savedCard.getId() > 0) {
+            if (savedCard.getId() != null) {
                 response = ResponseEntity
                         .status(HttpStatus.CREATED)
                         .body(savedCard);
@@ -51,9 +51,9 @@ public class CardController {
     }
 
     //get single card
-    @GetMapping("/{id}")
-    ResponseEntity<Card> getSingleCard(@PathVariable(value = "id") Long id) {
-        Optional<Card> card = cardService.getSingleCard(id);
+    @GetMapping("/{serial}")
+    ResponseEntity<Card> getSingleCard(@PathVariable(value = "serial") String serial) {
+        Optional<Card> card = cardService.getSingleCard(serial);
 
         /* Method 1
         return card.map(resp -> ResponseEntity.ok().body(resp))
@@ -67,23 +67,23 @@ public class CardController {
     }
 
     //update card
-    @PutMapping("/update/{id}")
+    @PutMapping("/update/{serial}")
     ResponseEntity<Card> updateCard(@RequestBody @Valid CardRequest cardRequest,
-                                    @RequestBody @Valid Long id) {
-        Optional<Card> cardToUpdate = cardService.getSingleCard(id);
+                                    @RequestBody @Valid String serial) {
+        Optional<Card> cardToUpdate = cardService.getSingleCard(serial);
         if (cardToUpdate.isPresent()) {
-            Card result = cardService.updateCard(cardRequest, id);
+            Card result = cardService.updateCard(cardRequest);
             return ResponseEntity.ok().body(result);
         }
         return ResponseEntity.notFound().build();
     }
 
     //delete card
-    @DeleteMapping("/delete/{id}")
-    ResponseEntity<?> deleteCard(@PathVariable(value = "id") Long id) {
-        Optional<Card> cardToDelete = cardService.getSingleCard(id);
+    @DeleteMapping("/delete/{serial}")
+    ResponseEntity<?> deleteCard(@PathVariable(value = "serial") String serial) {
+        Optional<Card> cardToDelete = cardService.getSingleCard(serial);
         if (cardToDelete.isPresent()) {
-            cardService.deleteCard(id);
+            cardService.deleteCard(serial);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();

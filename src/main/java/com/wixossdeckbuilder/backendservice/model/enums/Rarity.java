@@ -6,22 +6,23 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum Rarity {
-    PIECE("PI"),
-    SUPER_RARE("SR"),
+    STRUCTURE_DECK("ST"),
     LRIG("L"),
-    LRIG_PROMO("L(P)"),
+    PIECE("PI"),
+    COMMON("C"),
     RARE("R"),
+    SECRET_RARE("SCR"),
+    SUPER_RARE("SR"),
+    DIVA_RARE("DiR"),
+    ULTRA("???"),
+    STRUCTURE_DECK_PROMO("ST(P)"),
+    LRIG_PROMO("L(P)"),
+    COMMON_PROMO("C(P)"),
     RARE_PROMO("R(P)"),
     RARE_PROMO_PRIME("R(P')"),
-    COMMON("C"),
-    COMMON_PROMO("C(P)"),
-    STRUCTURE_DECK("ST"),
-    STRUCTURE_DECK_PROMO("ST(P)"),
     PROMO("PR"),
     PROMO_PRIME("PR(P)"),
-    ULTRA("???"),
-    DIVA_RARE("DiR"),
-    SECRET_RARE("SCR");
+    TOKEN("TOKEN");
 
     public final String value;
 

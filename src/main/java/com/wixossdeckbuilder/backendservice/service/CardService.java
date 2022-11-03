@@ -19,13 +19,13 @@ public class CardService {
     private CardRepository cardRepository;
 
     public Card createNewCard(CardRequest cardRequest) throws Exception {
-        Optional<Card> cardInDatabase = findBySerial(cardRequest.getSerial().getSerialNumber());
+        Optional<Card> cardInDatabase = findBySerial(cardRequest.getId());
         if (cardInDatabase.isPresent()) {
-            logger.error("Card with serial: " + cardRequest.getSerial().getSerialNumber() + " already exists!");
+            logger.error("Card with serial: " + cardRequest.getId() + " already exists!");
             return null;
         }
         Card newCard = new Card(
-                null,
+                cardRequest.getId(),
                 cardRequest.getName(),
                 cardRequest.getRarity(),
                 cardRequest.getCardType(),
@@ -52,13 +52,13 @@ public class CardService {
         return cardRepository.findAll();
     }
 
-    public Optional<Card> getSingleCard(Long id) {
-        return cardRepository.findById(id);
+    public Optional<Card> getSingleCard(String serial) {
+        return cardRepository.findById(serial);
     }
 
-    public Card updateCard(CardRequest cardRequest, Long id) {
+    public Card updateCard(CardRequest cardRequest) {
         Card updatedCard = new Card(
-                id,
+                cardRequest.getId(),
                 cardRequest.getName(),
                 cardRequest.getRarity(),
                 cardRequest.getCardType(),
@@ -81,11 +81,11 @@ public class CardService {
         return cardRepository.save(updatedCard);
     }
 
-    public void deleteCard(Long id) {
-        cardRepository.deleteById(id);
+    public void deleteCard(String serial) {
+        cardRepository.deleteById(serial);
     }
 
     public Optional<Card> findBySerial(String serial) {
-        return cardRepository.findBySerial(serial);
+        return cardRepository.findById(serial);
     }
 }
