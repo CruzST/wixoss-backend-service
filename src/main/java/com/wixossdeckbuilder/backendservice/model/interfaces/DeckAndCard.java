@@ -7,11 +7,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@MappedSuperclass
 public class DeckAndCard {
+    @ManyToOne
+    @JoinColumn(name = "deck_id")
     Deck deck;
+
+    @ManyToOne
+    @JoinColumn(name = "card_id")
     Card card;
 }
