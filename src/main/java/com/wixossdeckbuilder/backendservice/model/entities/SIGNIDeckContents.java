@@ -1,6 +1,7 @@
 package com.wixossdeckbuilder.backendservice.model.entities;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.wixossdeckbuilder.backendservice.model.interfaces.DeckAndCard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import org.hibernate.annotations.TypeDefs;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "deck_contents")
+@Table(name = "signi_deck_contents")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -20,31 +21,17 @@ import javax.persistence.*;
 @TypeDefs(
         {@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)}
 )
-public class DeckContents {
+public class SIGNIDeckContents extends DeckAndCard {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne // Many Deck Contents to One Deck
-    private Deck deck;
-
-    @ManyToOne // Many Deck Contents to one card?
-    private Card card;
-
     @Column(name = "card_count")
     private int cardCount;
 
-    @Column(name = "card_name")
-    private String cardName;
-
-    @Column(name = "card_serial")
-    private String cardSerial;
-
-    public DeckContents(Deck deck, Card card, int amount, String serialNumber) {
+    public SIGNIDeckContents(Deck deck, Card card, int amount) {
+        super(deck, card);
         this.id = null;
-        this.deck = deck;
-        this.card = card;
         this.cardCount = amount;
-        this.cardSerial = serialNumber;
     }
 }
