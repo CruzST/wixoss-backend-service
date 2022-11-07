@@ -1,7 +1,10 @@
 package com.wixossdeckbuilder.backendservice.model.entities;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import com.wixossdeckbuilder.backendservice.model.*;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.Ability;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.ColorCost;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.Image;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.Serial;
 import com.wixossdeckbuilder.backendservice.model.enums.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
