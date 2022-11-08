@@ -29,12 +29,13 @@ public class CardController {
         Card savedCard = null;
         try {
             savedCard = cardService.createNewCard(cardRequest);
-            if (savedCard.getId() != null) {
+            if (savedCard != null && savedCard.getId() != null) {
                 response = ResponseEntity
                         .status(HttpStatus.CREATED)
                         .body(savedCard);
             } else {
                 logger.error("Card was not saved!");
+                throw new Exception("Attempted to save card, but it was null!");
             }
         } catch (Exception e){
             response = ResponseEntity
