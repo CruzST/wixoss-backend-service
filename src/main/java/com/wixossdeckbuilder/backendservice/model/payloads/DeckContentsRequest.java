@@ -1,6 +1,6 @@
 package com.wixossdeckbuilder.backendservice.model.payloads;
 
-import com.wixossdeckbuilder.backendservice.model.DeckCards;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.DeckCards;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
