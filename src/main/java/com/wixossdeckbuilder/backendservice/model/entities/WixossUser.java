@@ -20,7 +20,6 @@ import java.util.Set;
 @TypeDefs(
         {@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)}
 )
-
 public class WixossUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -66,36 +66,4 @@ public class CardController {
         }
         return ResponseEntity.ok(card.get());
     }
-
-    //update card
-    @PutMapping("/update/{serial}")
-    ResponseEntity<Card> updateCard(@RequestBody @Valid CardRequest cardRequest,
-                                    @RequestBody @Valid String serial) {
-        Optional<Card> cardToUpdate = cardService.getSingleCard(serial);
-        if (cardToUpdate.isPresent()) {
-            Card result = cardService.updateCard(cardRequest);
-            return ResponseEntity.ok().body(result);
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-    //delete card
-    @DeleteMapping("/delete/{serial}")
-    ResponseEntity<?> deleteCard(@PathVariable(value = "serial") String serial) {
-        Optional<Card> cardToDelete = cardService.getSingleCard(serial);
-        if (cardToDelete.isPresent()) {
-            cardService.deleteCard(serial);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/serial/{serial}")
-    ResponseEntity<Card> getCardBySerial(@PathVariable(value = "serial") String serial) {
-        Optional<Card> card = cardService.findBySerial(serial);
-        if (card.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(card.get());
-    }
 }
