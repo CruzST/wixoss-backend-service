@@ -1,12 +1,11 @@
 package com.wixossdeckbuilder.backendservice.model.entities;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import com.wixossdeckbuilder.backendservice.model.interfaces.DeckAndCard;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.DeckAndCard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 

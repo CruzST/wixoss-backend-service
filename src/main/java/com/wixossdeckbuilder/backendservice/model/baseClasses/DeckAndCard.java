@@ -1,4 +1,4 @@
-package com.wixossdeckbuilder.backendservice.model.interfaces;
+package com.wixossdeckbuilder.backendservice.model.baseClasses;
 
 import com.wixossdeckbuilder.backendservice.model.entities.Card;
 import com.wixossdeckbuilder.backendservice.model.entities.Deck;
