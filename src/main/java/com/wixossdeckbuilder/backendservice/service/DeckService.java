@@ -1,8 +1,9 @@
 package com.wixossdeckbuilder.backendservice.service;
 
-import com.wixossdeckbuilder.backendservice.model.DeckCards;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.DeckCards;
 import com.wixossdeckbuilder.backendservice.model.entities.*;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
+import com.wixossdeckbuilder.backendservice.model.payloads.DeckContext;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckRequest;
 import com.wixossdeckbuilder.backendservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class DeckService {
     @Autowired
     private CardService cardService;
 
+    @Autowired
+    private FollowDeckService followDeckService;
+
 
     /**
      *
@@ -44,7 +48,7 @@ public class DeckService {
             expirationDate = todaysDate.plusDays(14);
             user = null;
         }
-        Boolean autoDelete = expirationDate == null ? true : false;
+        Boolean autoDelete = expirationDate == null ? false : true;
 
         Deck newDeck = new Deck(
                 null,
@@ -64,43 +68,48 @@ public class DeckService {
         return deckRepository.findAll();
     }
 
+    // TODO: Flesh out to return deck data from signi and lrig too should probably return
+    // a new object that has the card object
     public Optional<Deck> getSingleDeck(Long id) {
         return deckRepository.findById(id);
     }
 
     public void deleteDeck(Long id) {
+        // Delete card contents from signi deck
+        List<SIGNIDeckContents> signiDeckToDelete = getSigniDeckByDeckId(id);
+        signiDeckContentsRepository.deleteAll(signiDeckToDelete);
+        // delete card contents from lrig deck
+        List<LRIGDeckContents> lrigDeckToDelete = getLrigDeckById(id);
+        lrigDeckContentsRepository.deleteAll(lrigDeckToDelete);
+        // set any FK in the followed table to null
+        followDeckService.updateFollowedDeckToNull(id);
         deckRepository.deleteById(id);
     }
 
-    public Deck updateDeck(Deck oldDeck, WixossUser wixossUser, DeckRequest deckRequest) {
+    public Deck updateDeck(Long deckId, DeckContext updatedDeckContext) {
+        Deck oldDeck = deckRepository.findById(deckId).get();
+        updateDeckMetaData(oldDeck, updatedDeckContext.getDeckRequest());
+        return editCardsInDeck(updatedDeckContext.getDeckContentsRequest());
+    }
+
+    private void updateDeckMetaData(Deck deck, DeckRequest deckRequest) {
         Deck updatedDeck = new Deck(
-                oldDeck.getId(),
-                wixossUser,
+                deck.getId(),
+                deck.getWixossUser(),
                 deckRequest.getDeckName(),
-                oldDeck.getCreationDate(),
-                oldDeck.getExpirationDate(),
-                oldDeck.getAutoDelete(),
-                oldDeck.getViews(),
+                deck.getCreationDate(),
+                deck.getExpirationDate(),
+                deck.getAutoDelete(),
+                deck.getViews(),
                 deckRequest.getDescription(),
                 LocalDate.now()
         );
-        return updatedDeck;
+        deckRepository.save(updatedDeck);
     }
 
-    private Deck updateDeckLastUpdatedTimeStamp(Deck oldDeck) {
-        WixossUser owner = userRepository.getReferenceById(oldDeck.getWixossUser().getId()); // might be able to get away w/o the getId()
-        Deck updatedDeck = new Deck(
-                oldDeck.getId(),
-                owner,
-                oldDeck.getDeckName(),
-                oldDeck.getCreationDate(),
-                oldDeck.getExpirationDate(),
-                oldDeck.getAutoDelete(),
-                oldDeck.getViews(),
-                oldDeck.getDescription(),
-                LocalDate.now()
-        );
-        return updatedDeck;
+    private Deck updateDeckLastUpdatedTimeStamp(Deck deck) {
+        deck.setLastUpdated(LocalDate.now());
+        return deckRepository.save(deck);
     }
 
     public Deck addCardsToDeck(DeckContentsRequest deckContents) {
@@ -127,7 +136,7 @@ public class DeckService {
      * Functions that relate to the SIGNI Deck
      *
      * **/
-    public void editCardsInSigniDeck(Deck deck, List<DeckCards> updatedSigniDeck) {
+    private void editCardsInSigniDeck(Deck deck, List<DeckCards> updatedSigniDeck) {
         // Create a new list of deck contents SIGNI
         List<SIGNIDeckContents> updatedSIGNIDeckContents = createSigniList(deck, updatedSigniDeck);
 
@@ -158,13 +167,17 @@ public class DeckService {
         return deckContentArr;
     }
 
+    public List<SIGNIDeckContents> getSigniDeckByDeckId(Long id) {
+        return signiDeckContentsRepository.findAllByDeckId(id);
+    }
+
     /**
      *
      * Functions that relate to the LRIG Deck
      *
      * **/
 
-    public void editCardsInLrigDeck(Deck deck, List<String> updatedLrigDeck) {
+    private void editCardsInLrigDeck(Deck deck, List<String> updatedLrigDeck) {
         // Create a new list of deck contents LRIG
         List<LRIGDeckContents> updatedLRIGDeckContents = createLrigList(deck, updatedLrigDeck);
 
@@ -192,5 +205,9 @@ public class DeckService {
             deckContentArr.add(LRIGDeckContentsToAdd);
         }
         return deckContentArr;
+    }
+
+    public List<LRIGDeckContents> getLrigDeckById(Long id) {
+        return lrigDeckContentsRepository.findAllByDeckId(id);
     }
 }

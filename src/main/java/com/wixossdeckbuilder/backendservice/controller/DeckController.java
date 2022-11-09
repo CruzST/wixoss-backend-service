@@ -4,6 +4,7 @@ import com.wixossdeckbuilder.backendservice.model.entities.Deck;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckRequest;
+import com.wixossdeckbuilder.backendservice.model.payloads.DeckContext;
 import com.wixossdeckbuilder.backendservice.service.DeckService;
 import com.wixossdeckbuilder.backendservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,26 +24,25 @@ public class DeckController {
     @Autowired
     private UserService userService;
 
+    /**
+     *
+     * Deck as whole functions
+     *
+     * **/
     @PostMapping("/new")
-    ResponseEntity<Deck> createNewDeck(@RequestBody @Valid DeckRequest deckRequest,
-                                       @RequestBody @Valid DeckContentsRequest deckContentsRequest) {
-        Deck newDeck = deckService.createNewDeck(deckRequest);
-        deckContentsRequest.setDeckId(newDeck.getId());
-        Deck updatedDeck = deckService.addCardsToDeck(deckContentsRequest);
+    ResponseEntity<Deck> createNewDeck(@RequestBody @Valid DeckContext newDeckContext) {
+        Deck newDeck = deckService.createNewDeck(newDeckContext.getDeckRequest());
+        newDeckContext.getDeckContentsRequest().setDeckId(newDeck.getId());
+        Deck updatedDeck = deckService.addCardsToDeck(newDeckContext.getDeckContentsRequest());
         return ResponseEntity.ok(updatedDeck);
     }
 
-    // TODO: Flesh this out to be more logical
     @PutMapping("/update/{id}")
-    ResponseEntity<Deck> updateDeck(@RequestBody @Valid DeckRequest deckRequest,
-                                    @RequestBody @Valid Long id) {
-        Optional<Deck> deckToUpdate = deckService.getSingleDeck(id);
-        WixossUser deckOwner = userService.getReferenceToUserById(deckToUpdate.get().getWixossUser().getId());
-
+    ResponseEntity<Deck> updateDeck(@RequestBody @Valid DeckContext updatedDeckContext,
+                                    @PathVariable(value = "id") Long deckId) {
+        Optional<Deck> deckToUpdate = deckService.getSingleDeck(deckId);
         if (deckToUpdate.isPresent()){
-            // LOGIC
-            Deck oldDeck = deckToUpdate.get();
-            Deck updatedDeck = deckService.updateDeck(oldDeck, deckOwner, deckRequest);
+            Deck updatedDeck = deckService.updateDeck(deckId, updatedDeckContext);
             return ResponseEntity.ok(updatedDeck);
         }
         return ResponseEntity.notFound().build();
@@ -65,17 +64,19 @@ public class DeckController {
         return ResponseEntity.ok(deck.get());
     }
 
-    // TODO: Flesh this out
-    @DeleteMapping("/delete/{id}")
-    ResponseEntity<?> deleteDeck(@PathVariable(value = "id") Long id) {
+    @DeleteMapping("/delete/{id}/{ownerId}")
+    ResponseEntity<?> deleteDeck(@PathVariable(value = "id") Long id, @PathVariable(value = "ownerId") Long ownerId) {
         Optional<Deck> deckToDelete = deckService.getSingleDeck(id);
-        if (deckToDelete.isPresent()) {
+        Optional<WixossUser> deckOwner = userService.getSingleUser(ownerId);
+        if (deckToDelete.isPresent() && deckOwner.isPresent() &&
+                deckToDelete.get().getWixossUser().getId() == ownerId) {
             deckService.deleteDeck(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Deck successfully deleted");
         }
         return ResponseEntity.notFound().build();
     }
 
+    /** might not need these 2 end points and keep it coupled with the updating the deck as a whole**/
     @PostMapping("/addDeckCards")
     ResponseEntity<Deck> addDeckContents(@RequestBody @Valid DeckContentsRequest deckContentsRequest) {
         Deck updatedDeck = deckService.addCardsToDeck(deckContentsRequest);
