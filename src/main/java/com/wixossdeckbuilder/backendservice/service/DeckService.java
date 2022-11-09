@@ -1,11 +1,14 @@
 package com.wixossdeckbuilder.backendservice.service;
 
 import com.wixossdeckbuilder.backendservice.model.baseClasses.DeckCards;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.MainDeck;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.MainDeckContent;
 import com.wixossdeckbuilder.backendservice.model.entities.*;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckContext;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckRequest;
 import com.wixossdeckbuilder.backendservice.repository.*;
+import org.jboss.jandex.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,9 +71,28 @@ public class DeckService {
         return deckRepository.findAll();
     }
 
-    // TODO: Flesh out to return deck data from signi and lrig too should probably return
     // a new object that has the card object
-    public Optional<Deck> getSingleDeck(Long id) {
+    public Optional<MainDeck> getSingleDeck(Long id) {
+        Deck deckMetaData = deckRepository.getReferenceById(id);
+        List<SIGNIDeckContents> signiDeckContent = signiDeckContentsRepository.findAllByDeckId(id);
+        List<MainDeckContent> signiDeck = new ArrayList<>();
+        signiDeckContent.forEach(signiCard -> {
+            MainDeckContent card = new MainDeckContent(signiCard.getCard(), signiCard.getCardCount());
+            signiDeck.add(card);
+        });
+
+        List<LRIGDeckContents> lrigDeckContent = lrigDeckContentsRepository.findAllByDeckId(id);
+        List<MainDeckContent> lrigDeck = new ArrayList<>();
+        lrigDeckContent.forEach(lrig -> {
+            MainDeckContent card = new MainDeckContent(lrig.getCard(), 1);
+            lrigDeck.add(card);
+        });
+
+        MainDeck mainDeck = new MainDeck(id, deckMetaData.getDeckName(), signiDeck, lrigDeck);
+        return Optional.ofNullable(mainDeck);
+    }
+
+    public Optional<Deck> getDeckMetaData(Long id) {
         return deckRepository.findById(id);
     }
 

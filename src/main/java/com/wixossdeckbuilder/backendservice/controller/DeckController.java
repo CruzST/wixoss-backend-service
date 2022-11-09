@@ -1,5 +1,7 @@
 package com.wixossdeckbuilder.backendservice.controller;
 
+import com.wixossdeckbuilder.backendservice.model.baseClasses.MainDeck;
+import com.wixossdeckbuilder.backendservice.model.baseClasses.MainDeckContent;
 import com.wixossdeckbuilder.backendservice.model.entities.Deck;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
@@ -40,7 +42,7 @@ public class DeckController {
     @PutMapping("/update/{id}")
     ResponseEntity<Deck> updateDeck(@RequestBody @Valid DeckContext updatedDeckContext,
                                     @PathVariable(value = "id") Long deckId) {
-        Optional<Deck> deckToUpdate = deckService.getSingleDeck(deckId);
+        Optional<Deck> deckToUpdate = deckService.getDeckMetaData(deckId);
         if (deckToUpdate.isPresent()){
             Deck updatedDeck = deckService.updateDeck(deckId, updatedDeckContext);
             return ResponseEntity.ok(updatedDeck);
@@ -56,8 +58,8 @@ public class DeckController {
 
     // TODO: Flesh this out
     @GetMapping("/{id}")
-    ResponseEntity<Deck> getSingleDeck(@PathVariable(value = "id") Long id) {
-        Optional<Deck> deck = deckService.getSingleDeck(id);
+    ResponseEntity<MainDeck> getSingleDeck(@PathVariable(value = "id") Long id) {
+        Optional<MainDeck> deck = deckService.getSingleDeck(id);
         if (deck.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -66,7 +68,7 @@ public class DeckController {
 
     @DeleteMapping("/delete/{id}/{ownerId}")
     ResponseEntity<?> deleteDeck(@PathVariable(value = "id") Long id, @PathVariable(value = "ownerId") Long ownerId) {
-        Optional<Deck> deckToDelete = deckService.getSingleDeck(id);
+        Optional<Deck> deckToDelete = deckService.getDeckMetaData(id);
         Optional<WixossUser> deckOwner = userService.getSingleUser(ownerId);
         if (deckToDelete.isPresent() && deckOwner.isPresent() &&
                 deckToDelete.get().getWixossUser().getId() == ownerId) {
