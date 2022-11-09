@@ -36,4 +36,4 @@ build/
 /src/main/resources/application.properties
 /src/main/resources/static/cards.json
 /src/main/resources/cardImages/
-/src/main/java/com/wixossdeckbuilder/backendservice/startup/loaders/AdminLoader.java
+/src/main/java/com/wixossdeckbuilder/backendservice/startup/loaders/UserLoader.java

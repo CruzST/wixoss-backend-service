@@ -8,7 +8,6 @@ import com.wixossdeckbuilder.backendservice.service.DeckService;
 import com.wixossdeckbuilder.backendservice.service.FollowDeckService;
 import com.wixossdeckbuilder.backendservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/followDeck")
 public class FollowedDeckController {
-
 
 
     @Autowired
@@ -33,7 +31,7 @@ public class FollowedDeckController {
 
     @PostMapping("/follow")
     ResponseEntity<FollowDeck> createNewFollowedDeckEntry(@RequestBody @Valid FollowDeckRequest followDeckRequest) {
-        Optional<Deck> deckToFollow = deckService.getSingleDeck(followDeckRequest.getDeckId());
+        Optional<Deck> deckToFollow = deckService.getDeckMetaData(followDeckRequest.getDeckId());
         Optional<WixossUser> follower = userService.getSingleUser(followDeckRequest.getFollowerUserId());
         ResponseEntity response = null;
         if (deckToFollow.isEmpty() || follower.isEmpty()) {
