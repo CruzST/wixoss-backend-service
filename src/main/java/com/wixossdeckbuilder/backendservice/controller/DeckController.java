@@ -50,13 +50,11 @@ public class DeckController {
         return ResponseEntity.notFound().build();
     }
 
-
     @GetMapping("/all")
-    ResponseEntity<List<Deck>> getAllDecks() {
+    ResponseEntity<List<MainDeck>> getAllDecks() {
         return ResponseEntity.ok(deckService.getAllDecks());
     }
 
-    // TODO: Flesh this out
     @GetMapping("/{id}")
     ResponseEntity<MainDeck> getSingleDeck(@PathVariable(value = "id") Long id) {
         Optional<MainDeck> deck = deckService.getSingleDeck(id);
