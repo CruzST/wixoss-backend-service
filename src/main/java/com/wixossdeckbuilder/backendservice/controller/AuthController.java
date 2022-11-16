@@ -59,13 +59,15 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<?> authenticateuser(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<AuthPayload> authenticateuser(@RequestBody @Valid LoginRequest loginRequest) {
         Authentication loginToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+        ResponseEntity response = null;
         try {
             String jwt = authService.authenticateUser(loginToken);
-            return  ResponseEntity.ok(new AuthPayload(loginRequest.getEmail(), jwt));
+            response = ResponseEntity.ok(new AuthPayload(loginRequest.getEmail(), jwt));
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
+        return response;
     }
 }

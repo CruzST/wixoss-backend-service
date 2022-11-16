@@ -1,7 +1,6 @@
 package com.wixossdeckbuilder.backendservice.config;
 
 import com.wixossdeckbuilder.backendservice.config.filter.JWTTokenValidatorFilter;
-import com.wixossdeckbuilder.backendservice.config.filter.JWTTokenGeneratorFilter;
 import com.wixossdeckbuilder.backendservice.model.enums.CustomRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -25,9 +23,6 @@ public class SecurityConfiguration {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-//    @Autowired
-//    JWTTokenGeneratorFilter jwtTokenGeneratorFilter;
 
     @Autowired
     JWTTokenValidatorFilter jwtTokenValidatorFilter;
@@ -49,17 +44,14 @@ public class SecurityConfiguration {
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                //.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class) // doesnt work as i need?
                 .addFilterBefore(jwtTokenValidatorFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                    //.antMatchers("/api/deck/**").hasAnyRole(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
-                    .antMatchers("/api/deck/**").hasAnyAuthority(CustomRole.REGISTERED_USER.toString())
-                    .antMatchers("/api/card/new").hasAnyRole(CustomRole.ADMIN.toString())
-                    .antMatchers("/api/card/**").hasAnyRole(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
+                    .antMatchers("/api/deck/**").hasAnyAuthority(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
+                    //.antMatchers("/api/deck/**").hasAnyAuthority(CustomRole.REGISTERED_USER.toString()) // For testing authorities
+                    .antMatchers("/api/card/new").hasAnyAuthority(CustomRole.ADMIN.toString())
+                    .antMatchers("/api/card/**").hasAnyAuthority(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
                     .antMatchers("/api/auth/register").permitAll()
                     .antMatchers("/api/auth/login").permitAll();
-                //.anyRequest().permitAll()
-                //.and().formLogin().and().httpBasic();
         return http.build();
     }
 }
