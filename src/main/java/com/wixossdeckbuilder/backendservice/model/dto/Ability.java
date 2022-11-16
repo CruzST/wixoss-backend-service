@@ -1,4 +1,4 @@
-package com.wixossdeckbuilder.backendservice.model.baseClasses;
+package com.wixossdeckbuilder.backendservice.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

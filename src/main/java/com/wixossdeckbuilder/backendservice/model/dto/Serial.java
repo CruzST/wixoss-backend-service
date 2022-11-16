@@ -1,4 +1,4 @@
-package com.wixossdeckbuilder.backendservice.model.baseClasses;
+package com.wixossdeckbuilder.backendservice.model.dto;
 
 import com.wixossdeckbuilder.backendservice.model.enums.CardSet;
 import lombok.AllArgsConstructor;
