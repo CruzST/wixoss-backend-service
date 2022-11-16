@@ -1,11 +1,15 @@
 package com.wixossdeckbuilder.backendservice.config.filter;
 
 import com.wixossdeckbuilder.backendservice.config.security.jwt.JWTTokenProvider;
+import com.wixossdeckbuilder.backendservice.service.CardService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -17,7 +21,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+//@Component
 public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
+
+    public static final Logger logger = LoggerFactory.getLogger(JWTTokenGeneratorFilter.class);
 
     @Autowired
     JWTTokenProvider tokenProvider;
@@ -51,7 +58,7 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getServletPath().equals("/api/auth/login"); // This will change to be the path that does my login
+        return !request.getServletPath().equals("/api/auth/login");
     }
 
     // Not needed if using tokenProvider

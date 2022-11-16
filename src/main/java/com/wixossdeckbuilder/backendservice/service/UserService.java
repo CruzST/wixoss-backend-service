@@ -19,7 +19,6 @@ public class UserService {
     public static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public WixossUser createNewUser(UserRequest userRequest) {
-        System.out.println("Create new user called");
         WixossUser dupeUser = userRepository.findByUsername(userRequest.getUsername());
         if (Objects.nonNull(dupeUser)) {
             logger.debug("There is a dupe");
@@ -44,6 +43,10 @@ public class UserService {
 
     public Optional<WixossUser> getSingleUser(Long id) {
         return userRepository.findById(id);
+    }
+
+    public Optional<WixossUser>getUserByEmail(String email) {
+        return Optional.ofNullable(userRepository.findByEmail(email));
     }
 
     public WixossUser getReferenceToUserById(Long id) {

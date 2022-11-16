@@ -1,12 +1,10 @@
 package com.wixossdeckbuilder.backendservice.controller;
 
-import com.wixossdeckbuilder.backendservice.model.baseClasses.MainDeck;
-import com.wixossdeckbuilder.backendservice.model.baseClasses.MainDeckContent;
+import com.wixossdeckbuilder.backendservice.model.dto.MainDeck;
 import com.wixossdeckbuilder.backendservice.model.entities.Deck;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
-import com.wixossdeckbuilder.backendservice.model.payloads.DeckRequest;
-import com.wixossdeckbuilder.backendservice.model.payloads.DeckContext;
+import com.wixossdeckbuilder.backendservice.model.payloads.DeckPayload;
 import com.wixossdeckbuilder.backendservice.service.DeckService;
 import com.wixossdeckbuilder.backendservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +30,19 @@ public class DeckController {
      *
      * **/
     @PostMapping("/new")
-    ResponseEntity<Deck> createNewDeck(@RequestBody @Valid DeckContext newDeckContext) {
-        Deck newDeck = deckService.createNewDeck(newDeckContext.getDeckRequest());
-        newDeckContext.getDeckContentsRequest().setDeckId(newDeck.getId());
-        Deck updatedDeck = deckService.addCardsToDeck(newDeckContext.getDeckContentsRequest());
+    ResponseEntity<Deck> createNewDeck(@RequestBody @Valid DeckPayload newDeckPayload) {
+        Deck newDeck = deckService.createNewDeck(newDeckPayload.getDeckRequest());
+        newDeckPayload.getDeckContentsRequest().setDeckId(newDeck.getId());
+        Deck updatedDeck = deckService.addCardsToDeck(newDeckPayload.getDeckContentsRequest());
         return ResponseEntity.ok(updatedDeck);
     }
 
     @PutMapping("/update/{id}")
-    ResponseEntity<Deck> updateDeck(@RequestBody @Valid DeckContext updatedDeckContext,
+    ResponseEntity<Deck> updateDeck(@RequestBody @Valid DeckPayload updatedDeckPayload,
                                     @PathVariable(value = "id") Long deckId) {
         Optional<Deck> deckToUpdate = deckService.getDeckMetaData(deckId);
         if (deckToUpdate.isPresent()){
-            Deck updatedDeck = deckService.updateDeck(deckId, updatedDeckContext);
+            Deck updatedDeck = deckService.updateDeck(deckId, updatedDeckPayload);
             return ResponseEntity.ok(updatedDeck);
         }
         return ResponseEntity.notFound().build();

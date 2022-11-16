@@ -1,11 +1,11 @@
 package com.wixossdeckbuilder.backendservice.service;
 
-import com.wixossdeckbuilder.backendservice.model.baseClasses.DeckCards;
-import com.wixossdeckbuilder.backendservice.model.baseClasses.MainDeck;
-import com.wixossdeckbuilder.backendservice.model.baseClasses.MainDeckContent;
+import com.wixossdeckbuilder.backendservice.model.dto.DeckCards;
+import com.wixossdeckbuilder.backendservice.model.dto.MainDeck;
+import com.wixossdeckbuilder.backendservice.model.dto.MainDeckContent;
 import com.wixossdeckbuilder.backendservice.model.entities.*;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
-import com.wixossdeckbuilder.backendservice.model.payloads.DeckContext;
+import com.wixossdeckbuilder.backendservice.model.payloads.DeckPayload;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckRequest;
 import com.wixossdeckbuilder.backendservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,10 +100,10 @@ public class DeckService {
         deckRepository.deleteById(id);
     }
 
-    public Deck updateDeck(Long deckId, DeckContext updatedDeckContext) {
+    public Deck updateDeck(Long deckId, DeckPayload updatedDeckPayload) {
         Deck oldDeck = deckRepository.findById(deckId).get();
-        updateDeckMetaData(oldDeck, updatedDeckContext.getDeckRequest());
-        return editCardsInDeck(updatedDeckContext.getDeckContentsRequest());
+        updateDeckMetaData(oldDeck, updatedDeckPayload.getDeckRequest());
+        return editCardsInDeck(updatedDeckPayload.getDeckContentsRequest());
     }
 
     private void updateDeckMetaData(Deck deck, DeckRequest deckRequest) {

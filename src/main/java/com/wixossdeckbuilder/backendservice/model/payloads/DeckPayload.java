@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class DeckContext {
+public class DeckPayload {
 
     DeckRequest deckRequest;
     DeckContentsRequest deckContentsRequest;

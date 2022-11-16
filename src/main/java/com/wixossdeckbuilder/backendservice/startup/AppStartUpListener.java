@@ -1,6 +1,6 @@
 package com.wixossdeckbuilder.backendservice.startup;
 
-import com.wixossdeckbuilder.backendservice.startup.loaders.AdminLoader;
+import com.wixossdeckbuilder.backendservice.startup.loaders.UserLoader;
 import com.wixossdeckbuilder.backendservice.startup.loaders.CardLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ public class AppStartUpListener implements ApplicationListener<ContextRefreshedE
     CardLoader cardLoader;
 
     @Autowired
-    AdminLoader adminLoader;
+    UserLoader userLoader;
 
     public static final Logger logger = LoggerFactory.getLogger(AppStartUpListener.class);
 
@@ -26,15 +26,14 @@ public class AppStartUpListener implements ApplicationListener<ContextRefreshedE
         /** Loaders already ran in this block START
          *
          * cardLoader.uploadCardsToDB();
-         * adminLoader.createAndUploadAdmin();
-         *
+         * userLoader.createAndUploadAdmin();
+         * userLoader.createSampleUsers();
          *
          *
          *
         Loaders already ran in this block END **/
 
         /** Loaders that need to run in this block START **/
-
 
         /** Loaders that need to run in this block END **/
 

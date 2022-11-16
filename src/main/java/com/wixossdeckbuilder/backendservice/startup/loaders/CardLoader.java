@@ -1,9 +1,9 @@
 package com.wixossdeckbuilder.backendservice.startup.loaders;
 
-import com.wixossdeckbuilder.backendservice.model.baseClasses.Ability;
-import com.wixossdeckbuilder.backendservice.model.baseClasses.ColorCost;
-import com.wixossdeckbuilder.backendservice.model.baseClasses.Image;
-import com.wixossdeckbuilder.backendservice.model.baseClasses.Serial;
+import com.wixossdeckbuilder.backendservice.model.dto.Ability;
+import com.wixossdeckbuilder.backendservice.model.dto.ColorCost;
+import com.wixossdeckbuilder.backendservice.model.dto.Image;
+import com.wixossdeckbuilder.backendservice.model.dto.Serial;
 import com.wixossdeckbuilder.backendservice.model.enums.*;
 import com.wixossdeckbuilder.backendservice.model.payloads.CardRequest;
 import com.wixossdeckbuilder.backendservice.service.CardService;

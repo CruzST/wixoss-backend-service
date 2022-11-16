@@ -15,6 +15,7 @@ import java.util.Optional;
 public class CardService {
 
     public static final Logger logger = LoggerFactory.getLogger(CardService.class);
+
     @Autowired
     private CardRepository cardRepository;
 

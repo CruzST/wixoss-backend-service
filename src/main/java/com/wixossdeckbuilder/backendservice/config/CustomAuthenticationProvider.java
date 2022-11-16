@@ -30,12 +30,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+        String email = authentication.getName();
         String password = authentication.getCredentials().toString();
-        WixossUser wixossUser = userRepository.findByUsername((username));
+        WixossUser wixossUser = userRepository.findByEmail((email));
         if (Objects.nonNull(wixossUser)) {
             if (passwordEncoder.matches(password, wixossUser.getPassword())) {
-                return new UsernamePasswordAuthenticationToken(username, password, getGrantedAuthorities(wixossUser.getAuthorities()));
+                return new UsernamePasswordAuthenticationToken(email, password, getGrantedAuthorities(wixossUser.getAuthorities()));
             } else {
                 throw new BadCredentialsException("Authentication exception: Invalid password provided!");
             }

@@ -1,13 +1,16 @@
 package com.wixossdeckbuilder.backendservice.config;
 
-import com.wixossdeckbuilder.backendservice.config.filter.JTWTokenValidatorFilter;
+import com.wixossdeckbuilder.backendservice.config.filter.JWTTokenValidatorFilter;
 import com.wixossdeckbuilder.backendservice.config.filter.JWTTokenGeneratorFilter;
+import com.wixossdeckbuilder.backendservice.model.enums.CustomRole;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -22,6 +25,12 @@ public class SecurityConfiguration {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+//    @Autowired
+//    JWTTokenGeneratorFilter jwtTokenGeneratorFilter;
+
+    @Autowired
+    JWTTokenValidatorFilter jwtTokenValidatorFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -38,18 +47,19 @@ public class SecurityConfiguration {
                     }
                 })
                 .and().csrf().disable()
-                //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                //.and().addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
-                //.addFilterBefore(new JTWTokenValidatorFilter(), BasicAuthenticationFilter.class)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                //.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class) // doesnt work as i need?
+                .addFilterBefore(jwtTokenValidatorFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-//                    .antMatchers("/api/deck/**").hasAnyRole(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString())
-//                    .antMatchers("/api/card/new").hasAnyRole(CustomRole.ADMIN.toString())
-//                    .antMatchers("/api/card/update").hasAnyRole(CustomRole.ADMIN.toString())
-//                    .antMatchers("/api/card/**").hasAnyRole(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString())
-//                    .antMatchers("/api/auth/register").permitAll()
-                .anyRequest().permitAll()
-
-                .and().formLogin().and().httpBasic();
+                    //.antMatchers("/api/deck/**").hasAnyRole(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
+                    .antMatchers("/api/deck/**").hasAnyAuthority(CustomRole.REGISTERED_USER.toString())
+                    .antMatchers("/api/card/new").hasAnyRole(CustomRole.ADMIN.toString())
+                    .antMatchers("/api/card/**").hasAnyRole(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
+                    .antMatchers("/api/auth/register").permitAll()
+                    .antMatchers("/api/auth/login").permitAll();
+                //.anyRequest().permitAll()
+                //.and().formLogin().and().httpBasic();
         return http.build();
     }
 }
