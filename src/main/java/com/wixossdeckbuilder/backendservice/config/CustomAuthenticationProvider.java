@@ -3,6 +3,7 @@ package com.wixossdeckbuilder.backendservice.config;
 import com.wixossdeckbuilder.backendservice.model.enums.CustomRole;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.repository.UserRepository;
+import com.wixossdeckbuilder.backendservice.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -37,10 +38,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             if (passwordEncoder.matches(password, wixossUser.getPassword())) {
                 return new UsernamePasswordAuthenticationToken(email, password, getGrantedAuthorities(wixossUser.getAuthorities()));
             } else {
-                throw new BadCredentialsException("Authentication exception: Invalid password provided!");
+                throw new BadCredentialsException(Constants.UNAUTHORIZED_BAD_PW);
             }
         } else {
-            throw new BadCredentialsException("Authentication exception: No user found with provided details!");
+            throw new BadCredentialsException(Constants.USER_NOT_FOUND);
         }
     }
 

@@ -4,6 +4,7 @@ import com.wixossdeckbuilder.backendservice.model.enums.CustomRole;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.model.payloads.UserRequest;
 import com.wixossdeckbuilder.backendservice.repository.UserRepository;
+import com.wixossdeckbuilder.backendservice.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,10 @@ public class UserService {
 
     public static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public WixossUser createNewUser(UserRequest userRequest) {
-        WixossUser dupeUser = userRepository.findByUsername(userRequest.getUsername());
+    public WixossUser createNewUser(UserRequest userRequest) throws IllegalArgumentException {
+        WixossUser dupeUser = userRepository.findByEmail(userRequest.getUserEmail());
         if (Objects.nonNull(dupeUser)) {
-            logger.debug("There is a dupe");
-            return null;
+            throw new IllegalArgumentException(Constants.USER_ALREADY_EXISTS);
         }
         Set<CustomRole> authorities = new HashSet<>();
         authorities.add(CustomRole.REGISTERED_USER);

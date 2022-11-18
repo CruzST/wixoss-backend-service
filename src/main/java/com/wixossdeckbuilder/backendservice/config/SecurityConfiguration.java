@@ -1,5 +1,6 @@
 package com.wixossdeckbuilder.backendservice.config;
 
+import com.wixossdeckbuilder.backendservice.config.filter.JWTTokenGeneratorFilter;
 import com.wixossdeckbuilder.backendservice.config.filter.JWTTokenValidatorFilter;
 import com.wixossdeckbuilder.backendservice.model.enums.CustomRole;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -26,6 +28,9 @@ public class SecurityConfiguration {
 
     @Autowired
     JWTTokenValidatorFilter jwtTokenValidatorFilter;
+
+    @Autowired
+    JWTTokenGeneratorFilter jwtTokenGeneratorFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -44,14 +49,16 @@ public class SecurityConfiguration {
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(jwtTokenValidatorFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtTokenGeneratorFilter, BasicAuthenticationFilter.class)
+                .addFilterBefore(jwtTokenValidatorFilter, BasicAuthenticationFilter.class)
                 .authorizeRequests()
                     .antMatchers("/api/deck/**").hasAnyAuthority(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
                     //.antMatchers("/api/deck/**").hasAnyAuthority(CustomRole.REGISTERED_USER.toString()) // For testing authorities
                     .antMatchers("/api/card/new").hasAnyAuthority(CustomRole.ADMIN.toString())
                     .antMatchers("/api/card/**").hasAnyAuthority(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
                     .antMatchers("/api/auth/register").permitAll()
-                    .antMatchers("/api/auth/login").permitAll();
+                    .antMatchers("/api/auth/login/**").permitAll();
+                //.and().formLogin().and().httpBasic();
         return http.build();
     }
 }

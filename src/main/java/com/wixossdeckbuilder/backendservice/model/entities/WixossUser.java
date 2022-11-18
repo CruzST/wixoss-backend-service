@@ -38,7 +38,6 @@ public class WixossUser {
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
-    @JsonIgnore
     private Set<CustomRole> authorities;
 
 }
