@@ -51,7 +51,12 @@ public enum LrigTypeOrClass {
     TAWIL("Tawil"),
     TOKO("Toko"),
     UMR("Umr"),
-    WOLF("WOLF");
+    WOLF("WOLF"),
+    YUKA_YUKA("Yukayuka"),
+    MAHO_MAHO("Mahomaho"),
+    MIKO_MIKO("Mikomiko");
+
+
     //TODO: Add new ones
     public final String value;
 

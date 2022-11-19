@@ -4,6 +4,7 @@ import com.wixossdeckbuilder.backendservice.model.dto.Ability;
 import com.wixossdeckbuilder.backendservice.model.dto.ColorCost;
 import com.wixossdeckbuilder.backendservice.model.dto.Image;
 import com.wixossdeckbuilder.backendservice.model.dto.Serial;
+import com.wixossdeckbuilder.backendservice.model.entities.Card;
 import com.wixossdeckbuilder.backendservice.model.enums.*;
 import com.wixossdeckbuilder.backendservice.model.payloads.CardRequest;
 import com.wixossdeckbuilder.backendservice.service.CardService;
@@ -48,6 +49,18 @@ public class CardLoader {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void fixCardTimings() {
+        List<Card> cardsWithTiming = cardService.findAllByTiming();
+        List<Card> updatedCards = new ArrayList<>();
+        cardsWithTiming.forEach(card -> {
+            String oldTiming = card.getOldTiming();
+            List<Timing> timingAsList = getTimingAsList(oldTiming);
+            card.setTiming(timingAsList);
+            updatedCards.add(card);
+        });
+        cardService.saveAllCards(updatedCards);
     }
 
     private CardRequest createWixossCardFromJSON(JSONObject cardDataJSON) {
@@ -113,7 +126,7 @@ public class CardLoader {
 
         String coin = cardDataJSON.get("coin") != null ? (String) cardDataJSON.get("coin") : null;
 
-        String setFormat = cardDataJSON.get("set_format") != null ? (String) cardDataJSON.get("set_format") : null;
+        String setFormat = cardDataJSON.get("format") != null ? (String) cardDataJSON.get("format") : null;
 
         JSONObject serialJSON = (JSONObject) cardDataJSON.get("serial");
         Serial serial = new Serial(
@@ -125,7 +138,7 @@ public class CardLoader {
 
         Image image = null;
 
-        String timing = cardDataJSON.get("timing") != null ? (String) cardDataJSON.get("timing") : null;
+        String oldTiming = cardDataJSON.get("timing") != null ? (String) cardDataJSON.get("timing") : null;
 
 
 
@@ -147,7 +160,8 @@ public class CardLoader {
                 coin,
                 setFormat,
                 serial,
-                timing
+                null,
+                oldTiming
         );
         return newCardRequest;
     }
@@ -204,8 +218,6 @@ public class CardLoader {
         List<Rarity> rarityList = Arrays.asList(Rarity.RARE, Rarity.RARE_PROMO, Rarity.RARE_PROMO_PRIME);
         return rarityList;
     }
-
-
 
     private List<Rarity> getRaritiesAsArray(String array) {
         List<Rarity> returnList = new ArrayList<>();
@@ -274,6 +286,17 @@ public class CardLoader {
             }
         }
         return returnList;
+    }
+
+    private List<Timing> getTimingAsList(String timingAsString) {
+        List<Timing> timingList = new ArrayList<>();
+        if (timingAsString.toLowerCase().contains("main")) {
+            timingList.add(Timing.MAIN_PHASE);
+        }
+        if (timingAsString.toLowerCase().contains("attack")) {
+            timingList.add(Timing.ATTACK_PHASE);
+        }
+        return timingList;
     }
 
     static String getDelimiter(String array) {

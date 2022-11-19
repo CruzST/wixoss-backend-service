@@ -52,12 +52,20 @@ public class SecurityConfiguration {
                 .addFilterAfter(jwtTokenGeneratorFilter, BasicAuthenticationFilter.class)
                 .addFilterBefore(jwtTokenValidatorFilter, BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/api/deck/**").hasAnyAuthority(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
-                    //.antMatchers("/api/deck/**").hasAnyAuthority(CustomRole.REGISTERED_USER.toString()) // For testing authorities
-                    .antMatchers("/api/card/new").hasAnyAuthority(CustomRole.ADMIN.toString())
-                    .antMatchers("/api/card/**").hasAnyAuthority(CustomRole.ADMIN.toString(), CustomRole.PUBLIC_USER.toString(), CustomRole.REGISTERED_USER.toString())
-                    .antMatchers("/api/auth/register").permitAll()
-                    .antMatchers("/api/auth/login/**").permitAll();
+                    .antMatchers(
+                            "/api/deck/delete/**",
+                            "/api/deck/update/**")
+                                .hasAnyAuthority(
+                                        CustomRole.ADMIN.toString(),
+                                        CustomRole.REGISTERED_USER.toString())
+                    .antMatchers("/api/card/new")
+                                .hasAnyAuthority(CustomRole.ADMIN.toString())
+                    .antMatchers(
+                            "/api/card/**",
+                            "/api/deck/**",
+                            "/api/auth/register",
+                            "/api/auth/login/**"
+                    ).permitAll();
                 //.and().formLogin().and().httpBasic();
         return http.build();
     }

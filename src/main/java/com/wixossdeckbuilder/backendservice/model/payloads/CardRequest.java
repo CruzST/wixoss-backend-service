@@ -38,6 +38,8 @@ public class CardRequest {
     // TODO: IMAGE ATTR GOES HERE
     // private Image image
 
-    private String timing;
+    private List<Timing> timing;
+
+    private String oldTiming;
 
 }

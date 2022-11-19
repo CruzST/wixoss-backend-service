@@ -44,7 +44,8 @@ public class CardService {
                 cardRequest.getSetFormat(),
                 cardRequest.getSerial(),
                 null, //TODO: fix this with image
-                cardRequest.getTiming()
+                cardRequest.getTiming(),
+                cardRequest.getOldTiming()
         );
         return cardRepository.save(newCard);
     }
@@ -77,7 +78,8 @@ public class CardService {
                 cardRequest.getSetFormat(),
                 cardRequest.getSerial(),
                 null, //TODO: fix this eventually
-                cardRequest.getTiming()
+                cardRequest.getTiming(),
+                cardRequest.getOldTiming()
         );
         return cardRepository.save(updatedCard);
     }
@@ -88,5 +90,13 @@ public class CardService {
 
     public Optional<Card> findBySerial(String serial) {
         return cardRepository.findById(serial);
+    }
+
+    public List<Card> findAllByTiming() {
+        return cardRepository.findAllWithTiming();
+    }
+
+    public void saveAllCards(List<Card> cards) {
+        cardRepository.saveAll(cards);
     }
 }

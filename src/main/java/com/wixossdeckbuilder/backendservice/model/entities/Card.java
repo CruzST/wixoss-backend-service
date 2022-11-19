@@ -79,8 +79,7 @@ public class Card {
 
     private String coin;
 
-    @Column(name = "set_format")
-    private String setFormat;
+    private String format;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
@@ -90,14 +89,15 @@ public class Card {
     @Column(columnDefinition = "jsonb")
     private Image image;
 
-    //TODO: Add an attribute for TIMING
-    /*
-    * Timing could probably be an enum array
-    * Need to check the different terms they use, should all be the same
-    *
-    * */
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    @Enumerated(EnumType.STRING)
+    private List<Timing> timing;
 
-    private String timing;
+    @Column(name = "old_timing")
+    private String oldTiming;
+
+
 
 
 

@@ -34,6 +34,7 @@ public class AppStartUpListener implements ApplicationListener<ContextRefreshedE
         Loaders already ran in this block END **/
 
         /** Loaders that need to run in this block START **/
+        cardLoader.fixCardTimings();
 
         /** Loaders that need to run in this block END **/
 

@@ -13,7 +13,7 @@ public enum Team {
     NO_LIMIT("No Limit"),
     SANBAKA("Sanbaka"),
     UCHU("UCHU NO HAJIMARI"),
-    NONE("none");
+    KYURUKYURUN("Kyurukyurun☆");
     // TODO: Add new ones
 
     public final String value;
