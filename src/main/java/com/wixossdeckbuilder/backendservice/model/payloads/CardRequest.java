@@ -39,7 +39,4 @@ public class CardRequest {
     // private Image image
 
     private List<Timing> timing;
-
-    private String oldTiming;
-
 }

@@ -44,8 +44,7 @@ public class CardService {
                 cardRequest.getSetFormat(),
                 cardRequest.getSerial(),
                 null, //TODO: fix this with image
-                cardRequest.getTiming(),
-                cardRequest.getOldTiming()
+                cardRequest.getTiming()
         );
         return cardRepository.save(newCard);
     }
@@ -78,8 +77,7 @@ public class CardService {
                 cardRequest.getSetFormat(),
                 cardRequest.getSerial(),
                 null, //TODO: fix this eventually
-                cardRequest.getTiming(),
-                cardRequest.getOldTiming()
+                cardRequest.getTiming()
         );
         return cardRepository.save(updatedCard);
     }

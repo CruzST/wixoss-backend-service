@@ -93,15 +93,4 @@ public class Card {
     @Column(columnDefinition = "jsonb")
     @Enumerated(EnumType.STRING)
     private List<Timing> timing;
-
-    @Column(name = "old_timing")
-    private String oldTiming;
-
-
-
-
-
-
-
-
 }

@@ -51,6 +51,7 @@ public class CardLoader {
         }
     }
 
+    /* // Old Function that was used to fix the timings of each card
     public void fixCardTimings() {
         List<Card> cardsWithTiming = cardService.findAllByTiming();
         List<Card> updatedCards = new ArrayList<>();
@@ -62,6 +63,7 @@ public class CardLoader {
         });
         cardService.saveAllCards(updatedCards);
     }
+    */
 
     private CardRequest createWixossCardFromJSON(JSONObject cardDataJSON) {
         String cardName = cardDataJSON.get("card_name").toString();
@@ -138,7 +140,8 @@ public class CardLoader {
 
         Image image = null;
 
-        String oldTiming = cardDataJSON.get("timing") != null ? (String) cardDataJSON.get("timing") : null;
+        List<Timing> timing = cardDataJSON.get("timing") != null ?
+                getTimingAsList((String) cardDataJSON.get("timing")) : null;
 
 
 
@@ -160,8 +163,7 @@ public class CardLoader {
                 coin,
                 setFormat,
                 serial,
-                null,
-                oldTiming
+                timing
         );
         return newCardRequest;
     }
