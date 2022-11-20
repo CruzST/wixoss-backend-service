@@ -9,5 +9,5 @@ import lombok.Setter;
 @Setter
 public class Image {
     private String imageName;
-    private String ImageSourceURL;
+    private String imageSourceURL;
 }
