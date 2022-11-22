@@ -1,6 +1,6 @@
 package com.wixossdeckbuilder.backendservice.service;
 
-import com.wixossdeckbuilder.backendservice.model.entities.Deck;
+import com.wixossdeckbuilder.backendservice.model.entities.DeckMetaData;
 import com.wixossdeckbuilder.backendservice.model.entities.FollowDeck;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.repository.FollowDeckRepository;
@@ -15,8 +15,8 @@ public class FollowDeckService {
     @Autowired
     FollowDeckRepository followDeckRepository;
 
-    public FollowDeck followDeck(Deck deckToFollow, WixossUser follower) {
-        FollowDeck newFollow = new FollowDeck(null, deckToFollow, follower);
+    public FollowDeck followDeck(DeckMetaData deckMetaDataToFollow, WixossUser follower) {
+        FollowDeck newFollow = new FollowDeck(null, deckMetaDataToFollow, follower);
         return followDeckRepository.save(newFollow);
     }
 

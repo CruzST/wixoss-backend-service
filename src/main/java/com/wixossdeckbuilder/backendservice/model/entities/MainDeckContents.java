@@ -12,7 +12,7 @@ import org.hibernate.annotations.TypeDefs;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "signi_deck_contents")
+@Table(name = "main_deck_contents")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -20,7 +20,7 @@ import javax.persistence.*;
 @TypeDefs(
         {@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)}
 )
-public class SIGNIDeckContents extends DeckAndCard {
+public class MainDeckContents extends DeckAndCard {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -28,8 +28,8 @@ public class SIGNIDeckContents extends DeckAndCard {
     @Column(name = "card_count")
     private int cardCount;
 
-    public SIGNIDeckContents(Deck deck, Card card, int amount) {
-        super(deck, card);
+    public MainDeckContents(DeckMetaData deckMetaData, Card card, int amount) {
+        super(deckMetaData, card);
         this.id = null;
         this.cardCount = amount;
     }

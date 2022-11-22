@@ -1,6 +1,6 @@
 package com.wixossdeckbuilder.backendservice.controller;
 
-import com.wixossdeckbuilder.backendservice.model.entities.Deck;
+import com.wixossdeckbuilder.backendservice.model.entities.DeckMetaData;
 import com.wixossdeckbuilder.backendservice.model.entities.FollowDeck;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.model.payloads.FollowDeckRequest;
@@ -31,7 +31,7 @@ public class FollowedDeckController {
 
     @PostMapping("/follow")
     ResponseEntity<FollowDeck> createNewFollowedDeckEntry(@RequestBody @Valid FollowDeckRequest followDeckRequest) {
-        Optional<Deck> deckToFollow = deckService.getDeckMetaData(followDeckRequest.getDeckId());
+        Optional<DeckMetaData> deckToFollow = deckService.getDeckMetaData(followDeckRequest.getDeckId());
         Optional<WixossUser> follower = userService.getSingleUser(followDeckRequest.getFollowerUserId());
         ResponseEntity response = null;
         if (deckToFollow.isEmpty() || follower.isEmpty()) {

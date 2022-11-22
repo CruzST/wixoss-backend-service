@@ -1,8 +1,8 @@
 package com.wixossdeckbuilder.backendservice.service;
 
-import com.wixossdeckbuilder.backendservice.model.dto.DeckCards;
-import com.wixossdeckbuilder.backendservice.model.dto.MainDeck;
-import com.wixossdeckbuilder.backendservice.model.dto.MainDeckContent;
+import com.wixossdeckbuilder.backendservice.model.dto.DeckCardsMetaData;
+import com.wixossdeckbuilder.backendservice.model.dto.Deck;
+import com.wixossdeckbuilder.backendservice.model.dto.DeckContent;
 import com.wixossdeckbuilder.backendservice.model.entities.*;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckPayload;
@@ -39,7 +39,7 @@ public class DeckService {
 
 
     /** Deck as whole functions **/
-    public Deck createNewDeck(DeckRequest deckRequest) {
+    public DeckMetaData createNewDeck(DeckRequest deckRequest) {
         WixossUser owner = null;
         LocalDate todaysDate = LocalDate.now();
         LocalDate expirationDate = null;
@@ -49,7 +49,7 @@ public class DeckService {
             expirationDate = todaysDate.plusDays(14);
         }
         Boolean autoDelete = expirationDate == null ? false : true;
-        Deck newDeck = new Deck(
+        DeckMetaData newDeckMetaData = new DeckMetaData(
                 null,
                 owner,
                 deckRequest.getDeckName(),
@@ -60,37 +60,37 @@ public class DeckService {
                 deckRequest.getDescription(),
                 todaysDate
         );
-        return deckRepository.save(newDeck);
+        return deckRepository.save(newDeckMetaData);
     }
 
-    public List<MainDeck> getAllDecks() {
-        List<MainDeck> mainDecks = new ArrayList<>();
-        List<Deck> decksToConvert = deckRepository.findAll();
+    public List<Deck> getAllDecks() {
+        List<Deck> decks = new ArrayList<>();
+        List<DeckMetaData> decksToConvert = deckRepository.findAll();
         decksToConvert.forEach(deck -> {
-            List<SIGNIDeckContents> signiDeckContent = signiDeckContentsRepository.findAllByDeckId(deck.getId());
+            List<MainDeckContents> signiDeckContent = signiDeckContentsRepository.findAllByDeckId(deck.getId());
             List<LRIGDeckContents> lrigDeckContent = lrigDeckContentsRepository.findAllByDeckId(deck.getId());
-            MainDeck mainDeck = convertToMainDeck(deck.getId(), deck.getDeckName(), signiDeckContent, lrigDeckContent);
-            mainDecks.add(mainDeck);
+            Deck mainDeck = convertToDeck(deck.getId(), deck.getDeckName(), signiDeckContent, lrigDeckContent);
+            decks.add(mainDeck);
         });
-        return mainDecks;
+        return decks;
     }
 
     // a new object that has the card objects, the function that converts it from the deck content to main deck might be its own function
-    public Optional<MainDeck> getSingleDeck(Long id) {
-        Deck deckMetaData = deckRepository.getReferenceById(id);
-        List<SIGNIDeckContents> signiDeckContent = signiDeckContentsRepository.findAllByDeckId(id);
+    public Optional<Deck> getSingleDeck(Long id) {
+        DeckMetaData deckMetaData = deckRepository.getReferenceById(id);
+        List<MainDeckContents> signiDeckContent = signiDeckContentsRepository.findAllByDeckId(id);
         List<LRIGDeckContents> lrigDeckContent = lrigDeckContentsRepository.findAllByDeckId(id);
-        MainDeck mainDeck = convertToMainDeck(id, deckMetaData.getDeckName(), signiDeckContent, lrigDeckContent);
-        return Optional.ofNullable(mainDeck);
+        Deck deck = convertToDeck(id, deckMetaData.getDeckName(), signiDeckContent, lrigDeckContent);
+        return Optional.ofNullable(deck);
     }
 
-    public Optional<Deck> getDeckMetaData(Long id) {
+    public Optional<DeckMetaData> getDeckMetaData(Long id) {
         return deckRepository.findById(id);
     }
 
     public void deleteDeck(Long id) {
         // Delete card contents from signi deck
-        List<SIGNIDeckContents> signiDeckToDelete = getSigniDeckByDeckId(id);
+        List<MainDeckContents> signiDeckToDelete = getSigniDeckByDeckId(id);
         signiDeckContentsRepository.deleteAll(signiDeckToDelete);
         // delete card contents from lrig deck
         List<LRIGDeckContents> lrigDeckToDelete = getLrigDeckById(id);
@@ -100,52 +100,52 @@ public class DeckService {
         deckRepository.deleteById(id);
     }
 
-    public Deck updateDeck(Long deckId, DeckPayload updatedDeckPayload) {
-        Deck oldDeck = deckRepository.findById(deckId).get();
-        updateDeckMetaData(oldDeck, updatedDeckPayload.getDeckRequest());
+    public DeckMetaData updateDeck(Long deckId, DeckPayload updatedDeckPayload) {
+        DeckMetaData oldDeckMetaData = deckRepository.findById(deckId).get();
+        updateDeckMetaData(oldDeckMetaData, updatedDeckPayload.getDeckRequest());
         return editCardsInDeck(updatedDeckPayload.getDeckContentsRequest());
     }
 
-    private void updateDeckMetaData(Deck deck, DeckRequest deckRequest) {
-        Deck updatedDeck = new Deck(
-                deck.getId(),
-                deck.getWixossUser(),
+    private void updateDeckMetaData(DeckMetaData deckMetaData, DeckRequest deckRequest) {
+        DeckMetaData updatedDeckMetaData = new DeckMetaData(
+                deckMetaData.getId(),
+                deckMetaData.getWixossUser(),
                 deckRequest.getDeckName(),
-                deck.getCreationDate(),
-                deck.getExpirationDate(),
-                deck.getAutoDelete(),
-                deck.getViews(),
+                deckMetaData.getCreationDate(),
+                deckMetaData.getExpirationDate(),
+                deckMetaData.getAutoDelete(),
+                deckMetaData.getViews(),
                 deckRequest.getDescription(),
                 LocalDate.now()
         );
-        deckRepository.save(updatedDeck);
+        deckRepository.save(updatedDeckMetaData);
     }
 
-    private Deck updateDeckLastUpdatedTimeStamp(Deck deck) {
-        deck.setLastUpdated(LocalDate.now());
-        return deckRepository.save(deck);
+    private DeckMetaData updateDeckLastUpdatedTimeStamp(DeckMetaData deckMetaData) {
+        deckMetaData.setLastUpdated(LocalDate.now());
+        return deckRepository.save(deckMetaData);
     }
 
-    public Deck addCardsToDeck(DeckContentsRequest deckContents) {
-        Deck deck = deckRepository.getReferenceById(deckContents.getDeckId());
+    public DeckMetaData addCardsToDeck(DeckContentsRequest deckContents) {
+        DeckMetaData deckMetaData = deckRepository.getReferenceById(deckContents.getDeckId());
 
-        List<SIGNIDeckContents> signiDeckArr = createSigniList(deck, deckContents.getSigniDeck());
+        List<MainDeckContents> signiDeckArr = createSigniList(deckMetaData, deckContents.getSigniDeck());
         signiDeckContentsRepository.saveAll(signiDeckArr);
 
-        List<LRIGDeckContents> lrigDeckArr = createLrigList(deck, deckContents.getLrigDeck());
+        List<LRIGDeckContents> lrigDeckArr = createLrigList(deckMetaData, deckContents.getLrigDeck());
         lrigDeckContentsRepository.saveAll(lrigDeckArr);
 
-        return updateDeckLastUpdatedTimeStamp(deck);
+        return updateDeckLastUpdatedTimeStamp(deckMetaData);
     }
 
-    public Deck editCardsInDeck(DeckContentsRequest updatedDeckContentsRequest) {
-        Deck deck = deckRepository.getReferenceById(updatedDeckContentsRequest.getDeckId());
-        editCardsInSigniDeck(deck, updatedDeckContentsRequest.getSigniDeck());
-        editCardsInLrigDeck(deck, updatedDeckContentsRequest.getLrigDeck());
-        return updateDeckLastUpdatedTimeStamp(deck);
+    public DeckMetaData editCardsInDeck(DeckContentsRequest updatedDeckContentsRequest) {
+        DeckMetaData deckMetaData = deckRepository.getReferenceById(updatedDeckContentsRequest.getDeckId());
+        editCardsInSigniDeck(deckMetaData, updatedDeckContentsRequest.getSigniDeck());
+        editCardsInLrigDeck(deckMetaData, updatedDeckContentsRequest.getLrigDeck());
+        return updateDeckLastUpdatedTimeStamp(deckMetaData);
     }
 
-    public List<SIGNIDeckContents> getSigniDeckByDeckId(Long id) {
+    public List<MainDeckContents> getSigniDeckByDeckId(Long id) {
         return signiDeckContentsRepository.findAllByDeckId(id);
     }
 
@@ -154,23 +154,23 @@ public class DeckService {
     }
 
     /** Helper functions **/
-    private void editCardsInSigniDeck(Deck deck, List<DeckCards> updatedSigniDeck) {
+    private void editCardsInSigniDeck(DeckMetaData deckMetaData, List<DeckCardsMetaData> updatedSigniDeck) {
         // Create a new list of deck contents SIGNI, Get the current deck contents as stored in the database SIGNI
-        List<SIGNIDeckContents> updatedSigniContents = createSigniList(deck, updatedSigniDeck);
-        List<SIGNIDeckContents> originalSigniContents = signiDeckContentsRepository.findAllByDeckId(deck.getId());
+        List<MainDeckContents> updatedSigniContents = createSigniList(deckMetaData, updatedSigniDeck);
+        List<MainDeckContents> originalSigniContents = signiDeckContentsRepository.findAllByDeckId(deckMetaData.getId());
 
         //Remove objects each list to determine what to remove/add
-        List<SIGNIDeckContents> SIGNIDeckContentsToBeRemoved = removeFromSigniList(originalSigniContents, updatedSigniContents);
-        List<SIGNIDeckContents> SIGNIDeckContentsToAddToDB = removeFromSigniList(updatedSigniContents, originalSigniContents);
+        List<MainDeckContents> MainDeckContentsToBeRemoved = removeFromSigniList(originalSigniContents, updatedSigniContents);
+        List<MainDeckContents> MainDeckContentsToAddToDB = removeFromSigniList(updatedSigniContents, originalSigniContents);
 
-        signiDeckContentsRepository.deleteAll(SIGNIDeckContentsToBeRemoved);
-        signiDeckContentsRepository.saveAll(SIGNIDeckContentsToAddToDB);
+        signiDeckContentsRepository.deleteAll(MainDeckContentsToBeRemoved);
+        signiDeckContentsRepository.saveAll(MainDeckContentsToAddToDB);
     }
 
-    private void editCardsInLrigDeck(Deck deck, List<String> updatedLrigDeck) {
+    private void editCardsInLrigDeck(DeckMetaData deckMetaData, List<String> updatedLrigDeck) {
         // Create a new list of deck contents LRIG
-        List<LRIGDeckContents> updatedLrigContents = createLrigList(deck, updatedLrigDeck);
-        List<LRIGDeckContents> originalLrigContents = lrigDeckContentsRepository.findAllByDeckId(deck.getId());
+        List<LRIGDeckContents> updatedLrigContents = createLrigList(deckMetaData, updatedLrigDeck);
+        List<LRIGDeckContents> originalLrigContents = lrigDeckContentsRepository.findAllByDeckId(deckMetaData.getId());
 
         List<LRIGDeckContents> contentsToBeRemoved = removeFromLrigList(originalLrigContents, updatedLrigContents);
         List<LRIGDeckContents> deckContentsToAddToDB = removeFromLrigList(updatedLrigContents, originalLrigContents);
@@ -179,26 +179,26 @@ public class DeckService {
         lrigDeckContentsRepository.saveAll(deckContentsToAddToDB);
     }
 
-    private List<SIGNIDeckContents> createSigniList(Deck deck, List<DeckCards> deckContents) {
-        ArrayList<SIGNIDeckContents> deckContentArr = new ArrayList<>();
-        for (DeckCards cardInfo : deckContents) {
+    private List<MainDeckContents> createSigniList(DeckMetaData deckMetaData, List<DeckCardsMetaData> deckContents) {
+        ArrayList<MainDeckContents> deckContentArr = new ArrayList<>();
+        for (DeckCardsMetaData cardInfo : deckContents) {
             Card cardToFind = cardService.findBySerial(cardInfo.getCardSerial()).get();
-            SIGNIDeckContents SIGNIDeckContentsToAdd =  new SIGNIDeckContents(
-                    deck,
+            MainDeckContents MainDeckContentsToAdd =  new MainDeckContents(
+                    deckMetaData,
                     cardToFind,
                     cardInfo.getAmount()
             );
-            deckContentArr.add(SIGNIDeckContentsToAdd);
+            deckContentArr.add(MainDeckContentsToAdd);
         }
         return deckContentArr;
     }
 
-    private List<LRIGDeckContents> createLrigList(Deck deck, List<String> deckContents) {
+    private List<LRIGDeckContents> createLrigList(DeckMetaData deckMetaData, List<String> deckContents) {
         ArrayList<LRIGDeckContents> deckContentArr = new ArrayList<>();
         for (String cardInfo : deckContents) {
             Card cardToFind = cardService.findBySerial(cardInfo).get();
             LRIGDeckContents LRIGDeckContentsToAdd =  new LRIGDeckContents(
-                    deck,
+                    deckMetaData,
                     cardToFind
             );
             deckContentArr.add(LRIGDeckContentsToAdd);
@@ -206,24 +206,24 @@ public class DeckService {
         return deckContentArr;
     }
 
-    private MainDeck convertToMainDeck(Long id, String deckName, List<SIGNIDeckContents> signiDeckContents,
-                                       List<LRIGDeckContents> lrigDeckContents) {
-        List<MainDeckContent> signiDeck = new ArrayList<>();
-        signiDeckContents.forEach(signiCard -> {
-            MainDeckContent card = new MainDeckContent(signiCard.getCard(), signiCard.getCardCount());
+    private Deck convertToDeck(Long id, String deckName, List<MainDeckContents> mainDeckContents,
+                               List<LRIGDeckContents> lrigDeckContents) {
+        List<DeckContent> signiDeck = new ArrayList<>();
+        mainDeckContents.forEach(signiCard -> {
+            DeckContent card = new DeckContent(signiCard.getCard(), signiCard.getCardCount());
             signiDeck.add(card);
         });
 
-        List<MainDeckContent> lrigDeck = new ArrayList<>();
+        List<DeckContent> lrigDeck = new ArrayList<>();
         lrigDeckContents.forEach(lrig -> {
-            MainDeckContent card = new MainDeckContent(lrig.getCard(), 1);
+            DeckContent card = new DeckContent(lrig.getCard(), 1);
             lrigDeck.add(card);
         });
-        return new MainDeck(id, deckName, signiDeck, lrigDeck);
+        return new Deck(id, deckName, signiDeck, lrigDeck);
     }
 
     // Returns objects from the original list that are not equal objects in the check list
-    private List<SIGNIDeckContents> removeFromSigniList(List<SIGNIDeckContents> originalList, List<SIGNIDeckContents> checkList) {
+    private List<MainDeckContents> removeFromSigniList(List<MainDeckContents> originalList, List<MainDeckContents> checkList) {
         return originalList.stream().filter(
                 updatedContent -> checkList.stream().noneMatch(
                         contentInDB -> contentInDB.getCard().getSerial().equals(updatedContent.getCard().getSerial()) &&

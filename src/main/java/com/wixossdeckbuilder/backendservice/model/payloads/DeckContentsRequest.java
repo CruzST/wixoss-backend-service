@@ -1,6 +1,6 @@
 package com.wixossdeckbuilder.backendservice.model.payloads;
 
-import com.wixossdeckbuilder.backendservice.model.dto.DeckCards;
+import com.wixossdeckbuilder.backendservice.model.dto.DeckCardsMetaData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,7 +12,7 @@ public class DeckContentsRequest {
 
     Long deckId;
 
-    List<DeckCards> signiDeck;
+    List<DeckCardsMetaData> signiDeck;
 
     // Lrig deck can only have 1 of a card so only need serials in the payload
     List<String> lrigDeck;

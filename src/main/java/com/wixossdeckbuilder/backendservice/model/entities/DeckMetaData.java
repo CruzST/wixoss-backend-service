@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Deck {
+public class DeckMetaData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

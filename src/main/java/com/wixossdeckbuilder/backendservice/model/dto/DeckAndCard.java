@@ -1,7 +1,7 @@
 package com.wixossdeckbuilder.backendservice.model.dto;
 
 import com.wixossdeckbuilder.backendservice.model.entities.Card;
-import com.wixossdeckbuilder.backendservice.model.entities.Deck;
+import com.wixossdeckbuilder.backendservice.model.entities.DeckMetaData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class DeckAndCard {
     @ManyToOne
     @JoinColumn(name = "deck_id")
-    Deck deck;
+    DeckMetaData deck;
 
     @ManyToOne
     @JoinColumn(name = "card_id")

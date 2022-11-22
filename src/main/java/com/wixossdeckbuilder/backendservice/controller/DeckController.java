@@ -1,7 +1,7 @@
 package com.wixossdeckbuilder.backendservice.controller;
 
-import com.wixossdeckbuilder.backendservice.model.dto.MainDeck;
-import com.wixossdeckbuilder.backendservice.model.entities.Deck;
+import com.wixossdeckbuilder.backendservice.model.dto.Deck;
+import com.wixossdeckbuilder.backendservice.model.entities.DeckMetaData;
 import com.wixossdeckbuilder.backendservice.model.entities.WixossUser;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckPayload;
@@ -30,32 +30,32 @@ public class DeckController {
      *
      * **/
     @PostMapping("/new")
-    ResponseEntity<Deck> createNewDeck(@RequestBody @Valid DeckPayload newDeckPayload) {
-        Deck newDeck = deckService.createNewDeck(newDeckPayload.getDeckRequest());
-        newDeckPayload.getDeckContentsRequest().setDeckId(newDeck.getId());
-        Deck updatedDeck = deckService.addCardsToDeck(newDeckPayload.getDeckContentsRequest());
-        return ResponseEntity.ok(updatedDeck);
+    ResponseEntity<DeckMetaData> createNewDeck(@RequestBody @Valid DeckPayload newDeckPayload) {
+        DeckMetaData newDeckMetaData = deckService.createNewDeck(newDeckPayload.getDeckRequest());
+        newDeckPayload.getDeckContentsRequest().setDeckId(newDeckMetaData.getId());
+        DeckMetaData updatedDeckMetaData = deckService.addCardsToDeck(newDeckPayload.getDeckContentsRequest());
+        return ResponseEntity.ok(updatedDeckMetaData);
     }
 
     @PutMapping("/update/{id}")
-    ResponseEntity<Deck> updateDeck(@RequestBody @Valid DeckPayload updatedDeckPayload,
-                                    @PathVariable(value = "id") Long deckId) {
-        Optional<Deck> deckToUpdate = deckService.getDeckMetaData(deckId);
+    ResponseEntity<DeckMetaData> updateDeck(@RequestBody @Valid DeckPayload updatedDeckPayload,
+                                            @PathVariable(value = "id") Long deckId) {
+        Optional<DeckMetaData> deckToUpdate = deckService.getDeckMetaData(deckId);
         if (deckToUpdate.isPresent()){
-            Deck updatedDeck = deckService.updateDeck(deckId, updatedDeckPayload);
-            return ResponseEntity.ok(updatedDeck);
+            DeckMetaData updatedDeckMetaData = deckService.updateDeck(deckId, updatedDeckPayload);
+            return ResponseEntity.ok(updatedDeckMetaData);
         }
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/all")
-    ResponseEntity<List<MainDeck>> getAllDecks() {
+    ResponseEntity<List<Deck>> getAllDecks() {
         return ResponseEntity.ok(deckService.getAllDecks());
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<MainDeck> getSingleDeck(@PathVariable(value = "id") Long id) {
-        Optional<MainDeck> deck = deckService.getSingleDeck(id);
+    ResponseEntity<Deck> getSingleDeck(@PathVariable(value = "id") Long id) {
+        Optional<Deck> deck = deckService.getSingleDeck(id);
         if (deck.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -64,7 +64,7 @@ public class DeckController {
 
     @DeleteMapping("/delete/{id}/{ownerId}")
     ResponseEntity<?> deleteDeck(@PathVariable(value = "id") Long id, @PathVariable(value = "ownerId") Long ownerId) {
-        Optional<Deck> deckToDelete = deckService.getDeckMetaData(id);
+        Optional<DeckMetaData> deckToDelete = deckService.getDeckMetaData(id);
         Optional<WixossUser> deckOwner = userService.getSingleUser(ownerId);
         if (deckToDelete.isPresent() && deckOwner.isPresent() &&
                 deckToDelete.get().getWixossUser().getId() == ownerId) {
@@ -76,14 +76,14 @@ public class DeckController {
 
     /** might not need these 2 end points and keep it coupled with the updating the deck as a whole**/
     @PostMapping("/addDeckCards")
-    ResponseEntity<Deck> addDeckContents(@RequestBody @Valid DeckContentsRequest deckContentsRequest) {
-        Deck updatedDeck = deckService.addCardsToDeck(deckContentsRequest);
-        return ResponseEntity.ok().body(updatedDeck);
+    ResponseEntity<DeckMetaData> addDeckContents(@RequestBody @Valid DeckContentsRequest deckContentsRequest) {
+        DeckMetaData updatedDeckMetaData = deckService.addCardsToDeck(deckContentsRequest);
+        return ResponseEntity.ok().body(updatedDeckMetaData);
     }
 
     @PutMapping("/updateDeckCards")
-    ResponseEntity<Deck> updateDeckContents(@RequestBody @Valid DeckContentsRequest deckContentsRequest) {
-        Deck updatedDeck = deckService.editCardsInDeck(deckContentsRequest);
-        return ResponseEntity.ok().body(updatedDeck);
+    ResponseEntity<DeckMetaData> updateDeckContents(@RequestBody @Valid DeckContentsRequest deckContentsRequest) {
+        DeckMetaData updatedDeckMetaData = deckService.editCardsInDeck(deckContentsRequest);
+        return ResponseEntity.ok().body(updatedDeckMetaData);
     }
 }

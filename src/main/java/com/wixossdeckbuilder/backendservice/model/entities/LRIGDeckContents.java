@@ -25,7 +25,7 @@ public class LRIGDeckContents extends DeckAndCard {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    public LRIGDeckContents(Deck deck, Card card) {
-        super(deck, card);
+    public LRIGDeckContents(DeckMetaData deckMetaData, Card card) {
+        super(deckMetaData, card);
     }
 }

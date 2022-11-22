@@ -21,7 +21,7 @@ public class FollowDeck {
 
     @ManyToOne
     @JoinColumn(name = "followed_deck_id")
-    Deck followedDeck;
+    DeckMetaData followedDeck;
 
     @ManyToOne
     @JoinColumn(name = "following_user_id")

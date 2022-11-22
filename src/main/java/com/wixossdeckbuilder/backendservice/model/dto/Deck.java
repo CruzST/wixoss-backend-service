@@ -10,10 +10,10 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
-public class MainDeck {
+public class Deck {
     Long deckId;
     String deckName;
 
-    List<MainDeckContent> signiDeckContent;
-    List<MainDeckContent> lrigDeckContent;
+    List<DeckContent> signiDeckContent;
+    List<DeckContent> lrigDeckContent;
 }
