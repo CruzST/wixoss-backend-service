@@ -12,7 +12,7 @@ public class DeckContentsRequest {
 
     Long deckId;
 
-    List<DeckCardsMetaData> signiDeck;
+    List<DeckCardsMetaData> mainDeck;
 
     // Lrig deck can only have 1 of a card so only need serials in the payload
     List<String> lrigDeck;

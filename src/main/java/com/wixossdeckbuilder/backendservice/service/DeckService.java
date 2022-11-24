@@ -129,7 +129,7 @@ public class DeckService {
     public DeckMetaData addCardsToDeck(DeckContentsRequest deckContents) {
         DeckMetaData deckMetaData = deckRepository.getReferenceById(deckContents.getDeckId());
 
-        List<MainDeckContents> signiDeckArr = createSigniList(deckMetaData, deckContents.getSigniDeck());
+        List<MainDeckContents> signiDeckArr = createSigniList(deckMetaData, deckContents.getMainDeck());
         signiDeckContentsRepository.saveAll(signiDeckArr);
 
         List<LRIGDeckContents> lrigDeckArr = createLrigList(deckMetaData, deckContents.getLrigDeck());
@@ -140,7 +140,7 @@ public class DeckService {
 
     public DeckMetaData editCardsInDeck(DeckContentsRequest updatedDeckContentsRequest) {
         DeckMetaData deckMetaData = deckRepository.getReferenceById(updatedDeckContentsRequest.getDeckId());
-        editCardsInSigniDeck(deckMetaData, updatedDeckContentsRequest.getSigniDeck());
+        editCardsInSigniDeck(deckMetaData, updatedDeckContentsRequest.getMainDeck());
         editCardsInLrigDeck(deckMetaData, updatedDeckContentsRequest.getLrigDeck());
         return updateDeckLastUpdatedTimeStamp(deckMetaData);
     }
@@ -208,10 +208,10 @@ public class DeckService {
 
     private Deck convertToDeck(Long id, String deckName, List<MainDeckContents> mainDeckContents,
                                List<LRIGDeckContents> lrigDeckContents) {
-        List<DeckContent> signiDeck = new ArrayList<>();
+        List<DeckContent> mainDeck = new ArrayList<>();
         mainDeckContents.forEach(signiCard -> {
             DeckContent card = new DeckContent(signiCard.getCard(), signiCard.getCardCount());
-            signiDeck.add(card);
+            mainDeck.add(card);
         });
 
         List<DeckContent> lrigDeck = new ArrayList<>();
@@ -219,7 +219,7 @@ public class DeckService {
             DeckContent card = new DeckContent(lrig.getCard(), 1);
             lrigDeck.add(card);
         });
-        return new Deck(id, deckName, signiDeck, lrigDeck);
+        return new Deck(id, deckName, mainDeck, lrigDeck);
     }
 
     // Returns objects from the original list that are not equal objects in the check list
