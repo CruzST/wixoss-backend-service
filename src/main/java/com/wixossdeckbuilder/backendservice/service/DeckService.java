@@ -67,9 +67,9 @@ public class DeckService {
         List<Deck> decks = new ArrayList<>();
         List<DeckMetaData> decksToConvert = deckRepository.findAll();
         decksToConvert.forEach(deck -> {
-            List<MainDeckContents> signiDeckContent = signiDeckContentsRepository.findAllByDeckId(deck.getId());
+            List<MainDeckContents> mainDeckContents = signiDeckContentsRepository.findAllByDeckId(deck.getId());
             List<LRIGDeckContents> lrigDeckContent = lrigDeckContentsRepository.findAllByDeckId(deck.getId());
-            Deck mainDeck = convertToDeck(deck.getId(), deck.getDeckName(), signiDeckContent, lrigDeckContent);
+            Deck mainDeck = convertToDeck(deck.getId(), deck.getDeckName(), mainDeckContents, lrigDeckContent);
             decks.add(mainDeck);
         });
         return decks;
@@ -78,9 +78,9 @@ public class DeckService {
     // a new object that has the card objects, the function that converts it from the deck content to main deck might be its own function
     public Optional<Deck> getSingleDeck(Long id) {
         DeckMetaData deckMetaData = deckRepository.getReferenceById(id);
-        List<MainDeckContents> signiDeckContent = signiDeckContentsRepository.findAllByDeckId(id);
+        List<MainDeckContents> mainDeckContents = signiDeckContentsRepository.findAllByDeckId(id);
         List<LRIGDeckContents> lrigDeckContent = lrigDeckContentsRepository.findAllByDeckId(id);
-        Deck deck = convertToDeck(id, deckMetaData.getDeckName(), signiDeckContent, lrigDeckContent);
+        Deck deck = convertToDeck(id, deckMetaData.getDeckName(), mainDeckContents, lrigDeckContent);
         return Optional.ofNullable(deck);
     }
 

@@ -14,6 +14,6 @@ public class Deck {
     Long deckId;
     String deckName;
 
-    List<DeckContent> signiDeckContent;
+    List<DeckContent> mainDeckContent;
     List<DeckContent> lrigDeckContent;
 }
