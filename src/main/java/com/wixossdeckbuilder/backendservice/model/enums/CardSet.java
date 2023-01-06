@@ -13,14 +13,15 @@ public enum CardSet {
     P04("VERTEX DIVA"),
     P05("CURIOSITY DIVA"),
     P06("WELCOME BACK DIVA ~selector~"),
-    D01("INTERLUDE DIVA"),
-    D02("INTERLUDE DIVA"),
-    D03("GLOWING DIVA"),
-    D04("GLOWING DIVA"),
-    D05("GLOWING DIVA"),
-    D06("GLOWING DIVA"),
-    D07("GLOWING DIVA"),
-    D08("WELCOME BACK DIVA ~selector~");
+    D01("DIVA DEBUT DECK ANCIENT SURPRISE"),
+    D02("DIVA DEBUT DECK Nijisanji ver. Sanbaka"),
+    D03("DIVA DEBUT DECK No Limit"),
+    D04("DIVA DEBUT DECK Card Jockey"),
+    D05("DIVA DEBUT DECK UCHU NO HAJIMARI"),
+    D06("DIVA DEBUT DECK DIAGRAM"),
+    D07("TOP DIVA DECK Deus Ex Machina"),
+    D08("DIVA DEBUT DECK WHITE HOPE"),
+    Promo("Promo");
 
     public final String value;
 
