@@ -66,10 +66,17 @@ public class DeckService {
     public List<Deck> getAllDecks() {
         List<Deck> decks = new ArrayList<>();
         List<DeckMetaData> decksToConvert = deckRepository.findAll();
-        decksToConvert.forEach(deck -> {
-            List<MainDeckContents> mainDeckContents = signiDeckContentsRepository.findAllByDeckId(deck.getId());
-            List<LRIGDeckContents> lrigDeckContent = lrigDeckContentsRepository.findAllByDeckId(deck.getId());
-            Deck mainDeck = convertToDeck(deck.getId(), deck.getDeckName(), mainDeckContents, lrigDeckContent);
+        decksToConvert.forEach(deckMetaData -> {
+            List<MainDeckContents> mainDeckContents = signiDeckContentsRepository.findAllByDeckId(deckMetaData.getId());
+            List<LRIGDeckContents> lrigDeckContent = lrigDeckContentsRepository.findAllByDeckId(deckMetaData.getId());
+            String owner = deckMetaData.getWixossUser() != null ? deckMetaData.getWixossUser().getUsername() : "PUBLIC_USER";
+            Deck mainDeck = convertToDeck(deckMetaData.getId(),
+                    deckMetaData.getDeckName(),
+                    owner,
+                    deckMetaData.getDescription(),
+                    deckMetaData.getLastUpdated(),
+                    mainDeckContents,
+                    lrigDeckContent);
             decks.add(mainDeck);
         });
         return decks;
@@ -80,7 +87,13 @@ public class DeckService {
         DeckMetaData deckMetaData = deckRepository.getReferenceById(id);
         List<MainDeckContents> mainDeckContents = signiDeckContentsRepository.findAllByDeckId(id);
         List<LRIGDeckContents> lrigDeckContent = lrigDeckContentsRepository.findAllByDeckId(id);
-        Deck deck = convertToDeck(id, deckMetaData.getDeckName(), mainDeckContents, lrigDeckContent);
+        Deck deck = convertToDeck(id,
+                deckMetaData.getDeckName(),
+                deckMetaData.getWixossUser().getUsername(),
+                deckMetaData.getDescription(),
+                deckMetaData.getLastUpdated(),
+                mainDeckContents,
+                lrigDeckContent);
         return Optional.ofNullable(deck);
     }
 
@@ -206,7 +219,12 @@ public class DeckService {
         return deckContentArr;
     }
 
-    private Deck convertToDeck(Long id, String deckName, List<MainDeckContents> mainDeckContents,
+    private Deck convertToDeck(Long id,
+                               String deckName,
+                               String owner,
+                               String desc,
+                               LocalDate lastUpdated,
+                               List<MainDeckContents> mainDeckContents,
                                List<LRIGDeckContents> lrigDeckContents) {
         List<DeckContent> mainDeck = new ArrayList<>();
         mainDeckContents.forEach(signiCard -> {
@@ -219,7 +237,7 @@ public class DeckService {
             DeckContent card = new DeckContent(lrig.getCard(), 1);
             lrigDeck.add(card);
         });
-        return new Deck(id, deckName, mainDeck, lrigDeck);
+        return new Deck(id, deckName, owner, desc, lastUpdated, mainDeck, lrigDeck);
     }
 
     // Returns objects from the original list that are not equal objects in the check list

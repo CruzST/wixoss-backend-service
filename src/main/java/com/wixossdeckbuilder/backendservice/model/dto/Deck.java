@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
@@ -12,7 +13,11 @@ import java.util.List;
 @Getter
 public class Deck {
     Long deckId;
-    String deckName;
+    String name;
+    String owner;
+    String description;
+    LocalDate lastUpdated;
+
 
     List<DeckContent> mainDeckContent;
     List<DeckContent> lrigDeckContent;

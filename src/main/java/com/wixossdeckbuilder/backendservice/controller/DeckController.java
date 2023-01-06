@@ -62,6 +62,15 @@ public class DeckController {
         return ResponseEntity.ok(deck.get());
     }
 
+    @GetMapping("/metaData/{id}")
+    ResponseEntity<DeckMetaData> getDeckMetaData(@PathVariable(value = "id") Long id) {
+        Optional<DeckMetaData> deck = deckService.getDeckMetaData(id);
+        if (deck.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(deck.get());
+    }
+
     @DeleteMapping("/delete/{id}/{ownerId}")
     ResponseEntity<?> deleteDeck(@PathVariable(value = "id") Long id, @PathVariable(value = "ownerId") Long ownerId) {
         Optional<DeckMetaData> deckToDelete = deckService.getDeckMetaData(id);

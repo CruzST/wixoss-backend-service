@@ -54,7 +54,14 @@ public enum LrigTypeOrClass {
     WOLF("WOLF"),
     YUKA_YUKA("Yukayuka"),
     MAHO_MAHO("Mahomaho"),
-    MIKO_MIKO("Mikomiko");
+    MIKO_MIKO("Mikomiko"),
+    MIDORIKO("Midoriko"),
+    HANAYO("Hanayo"),
+    TAMA("Tama"),
+    URITH("Urith"),
+    PIRULUK("Piruluk"),
+    YUZUKI("Yuzuki");
+
 
 
     //TODO: Add new ones

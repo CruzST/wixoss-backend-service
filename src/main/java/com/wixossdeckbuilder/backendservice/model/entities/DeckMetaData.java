@@ -1,5 +1,6 @@
 package com.wixossdeckbuilder.backendservice.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,9 +32,11 @@ public class DeckMetaData {
     private LocalDate creationDate;
 
     @Column(name = "expiration_date")
+    @JsonIgnore
     private LocalDate expirationDate;
 
     @Column(name = "auto_delete")
+    @JsonIgnore
     private Boolean autoDelete;
 
     private int views;
