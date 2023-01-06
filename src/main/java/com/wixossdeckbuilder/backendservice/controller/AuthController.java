@@ -58,10 +58,13 @@ public class AuthController {
                         .body(savedWixossUser);
             }
         } catch (Exception e) {
-            response = ResponseEntity
-                    .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .body("An exception occurred during user register: " + e.getMessage());
-
+            HttpStatus code = HttpStatus.UNPROCESSABLE_ENTITY;
+            if (e.getMessage().equals(Constants.USER_ALREADY_EXISTS)) {
+                code = HttpStatus.CONFLICT;
+            } else if (e.getMessage().equals(Constants.ILLEGAL_USER_NAME)) {
+                code = HttpStatus.BAD_REQUEST;
+            }
+            response = ResponseEntity.status(code).body(e.getMessage());
         }
         return response;
     }

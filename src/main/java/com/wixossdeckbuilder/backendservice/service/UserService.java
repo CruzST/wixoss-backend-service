@@ -20,6 +20,9 @@ public class UserService {
     public static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public WixossUser createNewUser(UserRequest userRequest) throws IllegalArgumentException {
+        if (userRequest.getUsername().equals("PUBLIC_USER")) {
+            throw new IllegalArgumentException(Constants.ILLEGAL_USER_NAME);
+        }
         WixossUser dupeUser = userRepository.findByEmail(userRequest.getUserEmail());
         if (Objects.nonNull(dupeUser)) {
             throw new IllegalArgumentException(Constants.USER_ALREADY_EXISTS);
