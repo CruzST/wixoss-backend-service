@@ -8,6 +8,8 @@ import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckPayload;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckRequest;
 import com.wixossdeckbuilder.backendservice.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class DeckService {
+    public static final Logger logger = LoggerFactory.getLogger(DeckService.class);
+
     @Autowired
     private DeckRepository deckRepository;
 
@@ -82,14 +86,19 @@ public class DeckService {
         return decks;
     }
 
+    public List<DeckMetaData> getAllMetaData() {
+        return deckRepository.findAll();
+    }
+
     // a new object that has the card objects, the function that converts it from the deck content to main deck might be its own function
     public Optional<Deck> getSingleDeck(Long id) {
         DeckMetaData deckMetaData = deckRepository.getReferenceById(id);
         List<MainDeckContents> mainDeckContents = signiDeckContentsRepository.findAllByDeckId(id);
         List<LRIGDeckContents> lrigDeckContent = lrigDeckContentsRepository.findAllByDeckId(id);
+        String owner = deckMetaData.getWixossUser() != null ? deckMetaData.getWixossUser().getUsername() : "PUBLIC_USER";
         Deck deck = convertToDeck(id,
                 deckMetaData.getDeckName(),
-                deckMetaData.getWixossUser().getUsername(),
+                owner,
                 deckMetaData.getDescription(),
                 deckMetaData.getLastUpdated(),
                 mainDeckContents,
@@ -164,6 +173,13 @@ public class DeckService {
 
     public List<LRIGDeckContents> getLrigDeckById(Long id) {
         return lrigDeckContentsRepository.findAllByDeckId(id);
+    }
+
+    public void incrementDeckViewCount(Long deckId) {
+        DeckMetaData deckToUpdate = deckRepository.findById(deckId).get();
+        int newCount = deckToUpdate.getViews() + 1;
+        deckToUpdate.setViews(newCount);
+        deckRepository.save(deckToUpdate);
     }
 
     /** Helper functions **/
@@ -257,4 +273,6 @@ public class DeckService {
                 )
         ).collect(Collectors.toList());
     }
+
+
 }

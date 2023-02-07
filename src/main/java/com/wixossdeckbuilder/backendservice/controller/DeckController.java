@@ -7,6 +7,8 @@ import com.wixossdeckbuilder.backendservice.model.payloads.DeckContentsRequest;
 import com.wixossdeckbuilder.backendservice.model.payloads.DeckPayload;
 import com.wixossdeckbuilder.backendservice.service.DeckService;
 import com.wixossdeckbuilder.backendservice.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/deck")
 public class DeckController {
+    public static final Logger logger = LoggerFactory.getLogger(DeckController.class);
+
     @Autowired
     private DeckService deckService;
 
@@ -51,6 +55,11 @@ public class DeckController {
     @GetMapping("/all")
     ResponseEntity<List<Deck>> getAllDecks() {
         return ResponseEntity.ok(deckService.getAllDecks());
+    }
+
+    @GetMapping("/allMetaData")
+    ResponseEntity<List<DeckMetaData>> getAllDeckMetaData() {
+        return ResponseEntity.ok(deckService.getAllMetaData());
     }
 
     @GetMapping("/{id}")
@@ -94,5 +103,11 @@ public class DeckController {
     ResponseEntity<DeckMetaData> updateDeckContents(@RequestBody @Valid DeckContentsRequest deckContentsRequest) {
         DeckMetaData updatedDeckMetaData = deckService.editCardsInDeck(deckContentsRequest);
         return ResponseEntity.ok().body(updatedDeckMetaData);
+    }
+
+    @PutMapping("/incrementDeckViewCount/{id}")
+    void incrementDeckViewCount(@PathVariable(value = "id") Long id) {
+        logger.debug("IncrementCalled");
+        deckService.incrementDeckViewCount(id);
     }
 }

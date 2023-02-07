@@ -28,6 +28,7 @@ public class WixossUser {
 
     private String username;
 
+    @JsonIgnore
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -38,6 +39,7 @@ public class WixossUser {
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
+    @JsonIgnore
     private Set<CustomRole> authorities;
 
 }
